@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Controle de Inventário — VicStaffo</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #F2F4F8;
@@ -51,8 +51,10 @@
   #login-screen { display:none; position:fixed; inset:0; background:linear-gradient(135deg,#f5f3ef 0%,#ede9e1 100%); z-index:9999; align-items:center; justify-content:center; flex-direction:column; }
   #login-screen.open { display:flex; }
   .login-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:44px 40px; max-width:400px; width:90%; text-align:center; box-shadow:var(--shadow-lg); }
-  .login-logo { font-size:22px; font-weight:800; color:var(--accent); margin-bottom:4px; letter-spacing:-0.5px; }
-  .login-logo span { color:var(--text2); font-weight:600; }
+  .login-logo { font-size:28px; font-weight:900; font-family:'Playfair Display',serif; color:#1C2033; margin-bottom:4px; letter-spacing:-0.5px; }
+  .login-logo .vic { color:#1C2033; font-style:normal; }
+  .login-logo .gold { color:#9A7B2F; font-style:normal; }
+  .login-logo span.sub { color:var(--text3); font-family:'Plus Jakarta Sans',sans-serif; font-size:13px; font-weight:500; display:block; letter-spacing:0.3px; margin-top:-2px; font-style:normal; }
   .login-sub { font-size:13px; color:var(--text3); margin-bottom:28px; }
   .login-field { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; text-align:left; }
   .login-field label { font-size:11px; font-weight:700; color:var(--text2); letter-spacing:0.5px; text-transform:uppercase; }
@@ -65,9 +67,10 @@
   /* ── TOPBAR ── */
   .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 28px; display:flex; align-items:center; height:62px; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-sm); gap:12px; flex-wrap:wrap; }
   .logo { display:flex; align-items:center; gap:10px; margin-right:20px; white-space:nowrap; }
-  .logo-icon { width:34px; height:34px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; box-shadow:0 2px 8px rgba(224,90,28,0.35); }
-  .logo-text { font-size:16px; font-weight:700; color:var(--text); letter-spacing:-0.3px; }
-  .logo-text span { color:var(--accent); }
+  .logo-icon { width:34px; height:34px; background:linear-gradient(135deg,#9A7B2F,#C5A44A); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; box-shadow:0 2px 8px rgba(154,123,47,0.4); }
+  .logo-text { font-size:18px; font-weight:900; font-family:'Playfair Display',serif; color:#1C2033; letter-spacing:-0.3px; line-height:1; }
+  .logo-text .gold { color:#9A7B2F; font-style:normal; }
+  .logo-text .sub { font-size:10px; color:var(--text3); font-family:'Plus Jakarta Sans',sans-serif; font-weight:500; display:block; letter-spacing:0.5px; text-transform:uppercase; margin-top:1px; font-style:normal; }
   .nav-tabs { display:flex; gap:4px; flex-wrap:wrap; }
   .nav-tab { padding:7px 15px; border-radius:30px; cursor:pointer; font-size:13px; font-weight:500; color:var(--text2); border:none; background:transparent; white-space:nowrap; transition:all 0.18s; }
   .nav-tab:hover { background:var(--surface3); color:var(--text); }
@@ -223,7 +226,7 @@
 <!-- LOGIN SCREEN -->
 <div id="login-screen" class="open">
   <div class="login-box">
-    <div class="login-logo">VicStaffo <span>Inventário</span></div>
+    <div class="login-logo"><span class="gold">Vic</span>Staff<span class="gold">o</span><span class="sub">Controle de Inventário</span></div>
     <div class="login-sub">Faça login para continuar</div>
     <div class="login-field">
       <label>Usuário</label>
@@ -245,14 +248,17 @@
 <!-- TOPBAR -->
 <div class="topbar" id="main-topbar" style="display:none;">
   <div class="logo">
-    <div class="logo-icon">🏪</div>
-    <div class="logo-text"><span>VicStaffo</span> Inventário</div>
+    <div class="logo-icon">📦</div>
+    <div class="logo-text"><span class="gold">Vic</span>Staff<span class="gold">o</span><span class="sub">Inventário</span></div>
   </div>
   <div id="header-empresa-nome" style="font-size:11px;color:var(--text3);margin-right:12px;font-weight:500;"></div>
   <div class="nav-tabs" id="main-nav">
-    <button class="nav-tab active" id="nav-inventario" onclick="goTab('inventario',this)">📦 Inventário</button>
-    <button class="nav-tab" id="nav-produtos" onclick="goTab('produtos',this)">🗃️ Produtos</button>
-    <button class="nav-tab" id="nav-historico" onclick="goTab('historico',this)">📋 Histórico</button>
+    <button class="nav-tab active" id="nav-inventario" onclick="goTab('inventario',this)">📦 Inventario M</button>
+    <button class="nav-tab" id="nav-produtos" onclick="goTab('produtos',this)">🗃️ Produtos M</button>
+    <button class="nav-tab" id="nav-produtosg" onclick="goTab('produtosg',this)">🗃️ Produtos G</button>
+    <button class="nav-tab" id="nav-inventariog" onclick="goTab('inventariog',this)">📦 Inventario G</button>
+    <button class="nav-tab" id="nav-historico" onclick="goTab('historico',this)">📋 Histórico M</button>
+    <button class="nav-tab" id="nav-historicog" onclick="goTab('historicog',this)">📋 Histórico G</button>
     <button class="nav-tab" id="nav-usuarios" onclick="goTab('usuarios',this)">🔐 Usuários</button>
     <button class="nav-tab" id="nav-empresas" onclick="goTab('empresas',this)" style="display:none;">🏢 Empresas</button>
   </div>
@@ -364,12 +370,100 @@
     </div>
   </div>
 
+  <!-- ===================== INVENTÁRIO G ===================== -->
+  <div id="sec-inventariog" class="section">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">📦 Inventario G</div>
+        <div class="page-hero-sub">Contagem e valorização do estoque — Griletto</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Cabeçalho do Inventário</div>
+        <div id="invg-status-badge" class="status-open">● Em aberto</div>
+      </div>
+      <div class="inv-header-grid">
+        <div class="form-group">
+          <label>Mês de Referência</label>
+          <select id="invg-mes">
+            <option value="">Selecione...</option>
+            <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+            <option>Abril</option><option>Maio</option><option>Junho</option>
+            <option>Julho</option><option>Agosto</option><option>Setembro</option>
+            <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ano</label>
+          <input type="number" id="invg-ano" value="2025" min="2020" max="2099">
+        </div>
+        <div class="form-group">
+          <label>Responsável pelo Inventário</label>
+          <select id="invg-responsavel"><option value="">Selecione...</option></select>
+        </div>
+        <div class="form-group">
+          <label>Data do Inventário</label>
+          <input type="date" id="invg-data">
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">Total de Itens</div><div class="metric-value" id="mg-total-itens">—</div></div>
+      <div class="metric"><div class="metric-label">Itens Contados</div><div class="metric-value green" id="mg-contados">—</div></div>
+      <div class="metric"><div class="metric-label">Itens Zerados</div><div class="metric-value" id="mg-zerados">—</div></div>
+      <div class="metric">
+        <div class="metric-label">Valor Total do Inventário 🔐</div>
+        <div class="metric-value accent" id="mg-valor-total">R$ —</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Valor criptografado no banco</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Itens do Inventário G</div>
+        <div class="btn-group">
+          <button class="btn btn-sm" onclick="filterZeradosG()">Somente c/ qtd</button>
+          <button class="btn btn-sm" onclick="clearFilterG()">Todos</button>
+          <button class="btn btn-success btn-sm" onclick="salvarInventarioG()">💾 Salvar</button>
+          <button class="btn btn-primary btn-sm" onclick="fecharInventarioG()">🔒 Fechar e Imprimir</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-invg" placeholder="Buscar item..." oninput="renderInvTableG()">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="invg-table">
+          <thead>
+            <tr>
+              <th>Cód.</th><th>Item</th><th>Unid.</th>
+              <th style="text-align:right">Valor Compra (R$)</th>
+              <th style="text-align:center">Quantidade</th>
+              <th style="text-align:right">Valor Total (R$)</th>
+            </tr>
+          </thead>
+          <tbody id="invg-tbody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="5" style="text-align:right;padding-right:16px;font-size:12px">VALOR TOTAL DO INVENTÁRIO G</td>
+              <td class="td-num" id="tfoot-totalg">R$ 0,00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================== PRODUTOS ===================== -->
   <div id="sec-produtos" class="section">
     <div class="page-hero">
       <div>
-        <div class="page-hero-title">🗃️ Cadastro de Produtos</div>
-        <div class="page-hero-sub">Gerencie os itens e funcionários do inventário</div>
+        <div class="page-hero-title">🗃️ Produtos M</div>
+        <div class="page-hero-sub">Gerencie os itens e funcionários do Inventario M</div>
       </div>
     </div>
     <div class="card">
@@ -391,10 +485,9 @@
         <button class="btn" onclick="resetProdForm()">Cancelar</button>
       </div>
     </div>
-
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Lista de Produtos Cadastrados</div>
+        <div class="card-title">Lista de Produtos M</div>
         <div style="font-size:12px;color:var(--text3)" id="prod-count"></div>
       </div>
       <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
@@ -408,7 +501,7 @@
       <div class="search-bar">
         <div class="search-wrap">
           <span class="search-icon">🔍</span>
-          <input type="text" id="search-prod" placeholder="Buscar produto..." oninput="renderProdTable()">
+          <input type="text" id="search-prod" placeholder="Buscar produto M..." oninput="renderProdTable()">
         </div>
       </div>
       <div class="table-wrap">
@@ -420,20 +513,84 @@
     </div>
   </div>
 
+  <!-- ===================== PRODUTOS G ===================== -->
+  <div id="sec-produtosg" class="section">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">🗃️ Produtos G</div>
+        <div class="page-hero-sub">Gerencie os itens e funcionários do Inventario G</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" id="prodg-form-title">Novo Produto G</div>
+        <button class="btn btn-sm" onclick="resetProdFormG()">+ Novo</button>
+      </div>
+      <div class="form-row" style="grid-template-columns:120px 1fr 100px 160px;">
+        <div class="form-group"><label>Código</label><input type="text" id="pg-cod" placeholder="Ex: 621"></div>
+        <div class="form-group"><label>Item / Descrição</label><input type="text" id="pg-item" placeholder="Nome do produto"></div>
+        <div class="form-group">
+          <label>Unidade</label>
+          <select id="pg-unidade"><option>UN</option><option>KG</option><option>LT</option><option>RL</option><option>CX</option><option>PC</option><option>L</option></select>
+        </div>
+        <div class="form-group"><label>Valor de Compra (R$)</label><input type="number" id="pg-valor" placeholder="0,00" step="0.01" min="0"></div>
+      </div>
+      <div style="margin-top:14px;" class="btn-group">
+        <button class="btn btn-primary" onclick="salvarProdutoG()">Salvar Produto G</button>
+        <button class="btn" onclick="resetProdFormG()">Cancelar</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Lista de Produtos G</div>
+        <div style="font-size:12px;color:var(--text3)" id="prodg-count"></div>
+      </div>
+      <div class="search-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-prodg" placeholder="Buscar produto G..." oninput="renderProdTableG()">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cód.</th><th>Item</th><th>Unid.</th><th style="text-align:right">Valor Compra (R$)</th><th style="text-align:center">Ações</th></tr></thead>
+          <tbody id="prodg-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- ===================== HISTÓRICO ===================== -->
   <div id="sec-historico" class="section">
     <div class="page-hero">
       <div>
-        <div class="page-hero-title">📋 Histórico de Inventários</div>
-        <div class="page-hero-sub">Inventários fechados e arquivados</div>
+        <div class="page-hero-title">📋 Histórico M</div>
+        <div class="page-hero-sub">Inventários M fechados e arquivados</div>
       </div>
       <span style="font-size:12px;color:var(--text3)" id="hist-count"></span>
     </div>
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Inventários Salvos</div>
+        <div class="card-title">Inventários M Salvos</div>
       </div>
       <div id="hist-list"><div style="padding:24px;text-align:center;color:var(--text3)">Nenhum inventário salvo.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== HISTÓRICO G ===================== -->
+  <div id="sec-historicog" class="section">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">📋 Histórico G</div>
+        <div class="page-hero-sub">Inventários G fechados e arquivados</div>
+      </div>
+      <span style="font-size:12px;color:var(--text3)" id="histg-count"></span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Inventários G Salvos</div>
+      </div>
+      <div id="histg-list"><div style="padding:24px;text-align:center;color:var(--text3)">Nenhum inventário G salvo.</div></div>
     </div>
   </div>
 
@@ -467,8 +624,10 @@
           <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:8px;">Permissões de Módulos</label>
           <div class="perm-grid" id="perm-novo-grid">
             <label class="perm-item"><input type="checkbox" value="inventario" checked disabled> 📦 Inventário</label>
-            <label class="perm-item"><input type="checkbox" value="produtos"> 🗃️ Produtos</label>
-            <label class="perm-item"><input type="checkbox" value="historico"> 📋 Histórico</label>
+            <label class="perm-item"><input type="checkbox" value="produtos"> 🗃️ Produtos M</label>
+            <label class="perm-item"><input type="checkbox" value="produtosg"> 🗃️ Produtos G</label>
+            <label class="perm-item"><input type="checkbox" value="historico"> 📋 Histórico M</label>
+            <label class="perm-item"><input type="checkbox" value="historicog"> 📋 Histórico G</label>
             <label class="perm-item"><input type="checkbox" value="usuarios"> 🔐 Usuários</label>
           </div>
         </div>
@@ -504,6 +663,37 @@
   </div>
 
 </div><!-- /main -->
+
+<!-- MODAL IMPRIMIR / FECHAR G -->
+<div class="modal-backdrop" id="modal-print-g">
+  <div class="modal" style="width:700px;">
+    <div class="modal-header">
+      <div class="modal-title">Fechar e Imprimir Inventário G</div>
+      <button class="btn btn-icon" onclick="closeModal('modal-print-g')">✕</button>
+    </div>
+    <div id="print-content-g"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-print-g')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarFechamentoG()">🔒 Confirmar Fechamento</button>
+      <button class="btn btn-success" onclick="imprimirInventarioG()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VER HISTÓRICO G -->
+<div class="modal-backdrop" id="modal-hist-g">
+  <div class="modal" style="width:700px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-hist-title-g">Inventário G</div>
+      <button class="btn btn-icon" onclick="closeModal('modal-hist-g')">✕</button>
+    </div>
+    <div id="modal-hist-content-g"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-hist-g')">Fechar</button>
+      <button class="btn btn-success" onclick="imprimirHistG()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL IMPRIMIR / FECHAR -->
 <div class="modal-backdrop" id="modal-print">
@@ -989,11 +1179,12 @@ function aplicarPermissoesNav() {
   var isSA = _usuarioLogado.perfil === 'superadmin';
   var isAdmin = _usuarioLogado.perfil === 'admin';
   var perms = _usuarioLogado.permissoes;
-  var modulos = { 'inventario':'nav-inventario', 'produtos':'nav-produtos', 'historico':'nav-historico', 'usuarios':'nav-usuarios' };
+  var modulos = { 'inventario':'nav-inventario', 'inventariog':'nav-inventariog', 'produtos':'nav-produtos', 'produtosg':'nav-produtosg', 'historico':'nav-historico', 'historicog':'nav-historicog', 'usuarios':'nav-usuarios' };
   Object.keys(modulos).forEach(function(mod) {
     var btn = document.getElementById(modulos[mod]);
     if (!btn) return;
-    if (mod === 'inventario') { btn.style.display=''; return; }
+    if (mod === 'inventario' || mod === 'inventariog') { btn.style.display=''; return; }
+    if (mod === 'historico' || mod === 'historicog') { btn.style.display = (isSA||isAdmin||!perms||perms[mod]) ? '' : 'none'; return; }
     if (isSA || isAdmin) { btn.style.display=''; return; }
     if (!perms) { btn.style.display=''; return; }
     btn.style.display = perms[mod] ? '' : 'none';
@@ -1097,7 +1288,7 @@ function renderUsuarios() {
   var empresas = _getEmpresas();
   var el = document.getElementById('lista-usuarios');
   if (!lista.length) { el.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);">🔐 Nenhum usuário</div>'; return; }
-  var modulos = [{k:'inventario',l:'📦 Inventário'},{k:'produtos',l:'🗃️ Produtos'},{k:'historico',l:'📋 Histórico'},{k:'usuarios',l:'🔐 Usuários'}];
+  var modulos = [{k:'inventario',l:'📦 Inventário'},{k:'produtos',l:'🗃️ Produtos M'},{k:'produtosg',l:'🗃️ Produtos G'},{k:'historico',l:'📋 Histórico M'},{k:'historicog',l:'📋 Histórico G'},{k:'usuarios',l:'🔐 Usuários'}];
   var PERFIL_LABEL = { superadmin:'Super Admin', admin:'Administrador', operador:'Operador' };
   var isSA = _usuarioLogado && _usuarioLogado.perfil === 'superadmin';
   var h='';
@@ -1148,7 +1339,7 @@ function editarPermissoes(id) {
   var u = lista.find(function(x){ return x.id===id; });
   if (!u) return;
   var empresas = _getEmpresas();
-  var modulos = [{k:'inventario',l:'📦 Inventário'},{k:'produtos',l:'🗃️ Produtos'},{k:'historico',l:'📋 Histórico'},{k:'usuarios',l:'🔐 Usuários'}];
+  var modulos = [{k:'inventario',l:'📦 Inventário'},{k:'produtos',l:'🗃️ Produtos M'},{k:'produtosg',l:'🗃️ Produtos G'},{k:'historico',l:'📋 Histórico M'},{k:'historicog',l:'📋 Histórico G'},{k:'usuarios',l:'🔐 Usuários'}];
   var perms = u.permissoes || {};
   var checksHtml = modulos.map(function(mod){
     var disabled = mod.k==='inventario' ? ' disabled' : '';
@@ -1407,10 +1598,12 @@ function carregarDadosApp() {
   renderInvTable();
   renderProdTable();
   renderFuncionarios();
-  renderHistorico();
+  renderHistoricoM();
   updateMetrics();
   renderUsuarios();
   renderEmpresas();
+  carregarDadosG();
+  renderProdTableG();
 }
 
 /* =========================================================
@@ -1434,8 +1627,11 @@ function goTab(name, el) {
   document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
   document.getElementById('sec-'+name).classList.add('active');
   if (el) el.classList.add('active');
-  if (name==='historico') renderHistorico();
+  if (name==='historico') renderHistoricoM();
+  if (name==='historicog') renderHistoricoG();
+  if (name==='inventariog') { carregarDadosG(); renderInvTableG(); }
   if (name==='produtos') renderProdTable();
+  if (name==='produtosg') renderProdTableG();
   if (name==='usuarios') { renderUsuarios(); _buildEmpresaChecks(null); }
   if (name==='empresas') renderEmpresas();
 }
@@ -1522,6 +1718,9 @@ async function salvarInventario() {
   currentInv.responsavel = document.getElementById('inv-responsavel').value;
   currentInv.data        = document.getElementById('inv-data').value;
 
+  if (!currentInv.mes)         { toast('Selecione o mês antes de salvar.', 'error'); return; }
+  if (!currentInv.responsavel) { toast('Selecione o responsável antes de salvar.', 'error'); return; }
+
   /* Criptografa o valor total antes de persistir */
   var total = calcTotalAtual();
   currentInv.valorTotalEnc = await encryptValue(total.toFixed(2));
@@ -1565,7 +1764,7 @@ async function confirmarFechamento() {
   document.getElementById('inv-status-badge').textContent='● Em aberto';
 
   renderInvTable();
-  renderHistorico();
+  renderHistoricoM();
 }
 
 function imprimirInventario() {
@@ -1647,6 +1846,83 @@ function resetProdForm() {
 }
 
 /* =========================================================
+   PRODUTOS G — CRUD
+   ========================================================= */
+var editingProdG = null;
+
+function renderProdTableG() {
+  var q = (document.getElementById('search-prodg').value || '').toLowerCase();
+  var tbody = document.getElementById('prodg-tbody');
+  tbody.innerHTML='';
+  var filtered = produtosG.filter(function(p){ return !q || p.item.toLowerCase().includes(q) || String(p.cod).includes(q); });
+  document.getElementById('prodg-count').textContent = filtered.length+' produtos';
+  filtered.forEach(function(p){
+    var tr = document.createElement('tr');
+    tr.innerHTML='<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--text3)">'+p.cod+'</td>'
+      +'<td>'+p.item+'</td>'
+      +'<td class="td-center"><span class="badge badge-amber">'+p.unidade+'</span></td>'
+      +'<td class="td-num">'+fmtMoney(p.valor)+'</td>'
+      +'<td class="td-center">'
+      +'<button class="btn btn-sm" onclick="editarProdutoG(\''+p.cod+'\')">✏️</button> '
+      +'<button class="btn btn-sm btn-danger" onclick="excluirProdutoG(\''+p.cod+'\')">🗑</button>'
+      +'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function salvarProdutoG() {
+  var cod     = document.getElementById('pg-cod').value.trim();
+  var item    = document.getElementById('pg-item').value.trim();
+  var unidade = document.getElementById('pg-unidade').value;
+  var valor   = parseFloat(document.getElementById('pg-valor').value) || 0;
+  if (!cod || !item) { toast('Preencha o código e o nome do produto.','error'); return; }
+  if (editingProdG) {
+    var idx = produtosG.findIndex(function(p){ return p.cod===editingProdG; });
+    if (idx>=0) { produtosG[idx]={cod,item,unidade,valor}; toast('Produto G atualizado!','success'); }
+    editingProdG=null;
+    document.getElementById('prodg-form-title').textContent='Novo Produto G';
+  } else {
+    if (produtosG.find(function(p){ return p.cod===cod; })) { toast('Código já cadastrado.','error'); return; }
+    produtosG.push({cod,item,unidade,valor});
+    toast('Produto G cadastrado!','success');
+  }
+  _dbSetG('produtosG', produtosG);
+  resetProdFormG();
+  renderProdTableG();
+  renderInvTableG();
+}
+
+function editarProdutoG(cod) {
+  var p = produtosG.find(function(x){ return x.cod===cod; });
+  if (!p) return;
+  editingProdG=cod;
+  document.getElementById('pg-cod').value=p.cod;
+  document.getElementById('pg-item').value=p.item;
+  document.getElementById('pg-unidade').value=p.unidade;
+  document.getElementById('pg-valor').value=p.valor;
+  document.getElementById('prodg-form-title').textContent='Editar Produto G';
+  document.getElementById('pg-cod').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function excluirProdutoG(cod) {
+  if (!confirm('Excluir este produto G?')) return;
+  produtosG=produtosG.filter(function(p){ return p.cod!==cod; });
+  _dbSetG('produtosG', produtosG);
+  renderProdTableG();
+  renderInvTableG();
+  toast('Produto G removido.','success');
+}
+
+function resetProdFormG() {
+  editingProdG=null;
+  document.getElementById('pg-cod').value='';
+  document.getElementById('pg-item').value='';
+  document.getElementById('pg-unidade').value='UN';
+  document.getElementById('pg-valor').value='';
+  document.getElementById('prodg-form-title').textContent='Novo Produto G';
+}
+
+/* =========================================================
    FUNCIONÁRIOS
    ========================================================= */
 function renderFuncionarios() {
@@ -1681,35 +1957,27 @@ function removeFuncionario(idx) {
 /* =========================================================
    HISTÓRICO
    ========================================================= */
-async function renderHistorico() {
+async function renderHistoricoM() {
   var list = document.getElementById('hist-list');
-  document.getElementById('hist-count').textContent = inventarios.length+' registros';
-  if (!inventarios.length) { list.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Nenhum inventário arquivado.</div>'; return; }
+  document.getElementById('hist-count').textContent = inventarios.length + ' registro(s)';
+  if (!inventarios.length) {
+    list.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Nenhum inventário M arquivado.</div>';
+    return;
+  }
   list.innerHTML='';
   var sorted = [...inventarios].reverse();
   for (var i=0; i<sorted.length; i++) {
-    var inv = sorted[i];
-    /* Tenta descriptografar valor total */
-    var totalStr = '';
+    var inv=sorted[i];
+    var totalStr='';
     if (inv.valorTotalEnc) {
-      try {
-        var dec = await decryptValue(inv.valorTotalEnc);
-        totalStr = fmtMoney(parseFloat(dec)||0);
-      } catch(e) { totalStr = fmtMoney(calcTotal(inv)); }
-    } else {
-      totalStr = fmtMoney(calcTotal(inv));
-    }
-    var div = document.createElement('div');
-    div.className='hist-item';
-    div.innerHTML='<div>'
-      +'<div style="font-weight:600;font-size:14px">'+inv.mes+' / '+inv.ano+'</div>'
-      +'<div class="hist-meta">Responsável: '+(inv.responsavel||'—')+' · Data: '+fmtDate(inv.data)+' · '+Object.values(inv.itens||{}).filter(function(v){return v>0;}).length+' itens contados</div>'
-      +'</div>'
+      try { var dec=await decryptValue(inv.valorTotalEnc); totalStr=fmtMoney(parseFloat(dec)||0); } catch(e){ totalStr=fmtMoney(calcTotal(inv)); }
+    } else { totalStr=fmtMoney(calcTotal(inv)); }
+    var div=document.createElement('div'); div.className='hist-item';
+    div.innerHTML='<div><div style="font-weight:600;font-size:14px">'+inv.mes+' / '+inv.ano+'</div>'
+      +'<div class="hist-meta">Responsável: '+(inv.responsavel||'—')+' · Data: '+fmtDate(inv.data)+' · '+Object.keys(inv.itens||{}).length+' itens</div></div>'
       +'<div style="display:flex;align-items:center;gap:10px;">'
-      +'<div style="text-align:right">'
-      +'<div style="font-size:11px;color:var(--text3)">Valor Total 🔐</div>'
-      +'<div style="font-weight:600;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+totalStr+'</div>'
-      +'</div>'
+      +'<div style="text-align:right"><div style="font-size:11px;color:var(--text3)">Valor Total 🔐</div>'
+      +'<div style="font-weight:600;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+totalStr+'</div></div>'
       +'<button class="btn btn-sm" onclick="verInventario('+inv.id+')">Ver</button>'
       +'<button class="btn btn-sm btn-success" onclick="printHistItem('+inv.id+')">🖨️</button>'
       +'<button class="btn btn-sm btn-danger" onclick="excluirHist('+inv.id+')">🗑</button>'
@@ -1739,7 +2007,7 @@ function excluirHist(id) {
   if (!confirm('Excluir este inventário do histórico?')) return;
   inventarios=inventarios.filter(function(x){ return x.id!==id; });
   DB.set('inventarios', inventarios);
-  renderHistorico();
+  renderHistoricoM();
   toast('Inventário excluído.','success');
 }
 
@@ -1748,8 +2016,7 @@ function excluirHist(id) {
    ========================================================= */
 function buildPrintHTML(inv, preview) {
   var total = calcTotal(inv);
-  var itensComQtd = produtos.filter(function(p){ return (inv.itens[p.cod]||0)>0; });
-  var itens = itensComQtd.length>0 ? itensComQtd : produtos;
+  var itens = produtos; /* TODOS os produtos, independente de quantidade */
   var rows='';
   itens.forEach(function(p){
     var qty=inv.itens[p.cod]||0;
@@ -1767,7 +2034,7 @@ function buildPrintHTML(inv, preview) {
     +'<div style="font-family:\'Plus Jakarta Sans\',Arial,sans-serif;background:#fff;padding:'+(preview?'0':'20px')+';color:#000;">'
     +'<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">'
     +'<div>'
-    +'<div style="font-size:20px;font-weight:800;color:#E05A1C;">VicStaffo</div>'
+    +'<div style="font-size:22px;font-weight:900;font-family:Georgia,serif;color:#1C2033;"><span style="color:#9A7B2F;">Vic</span>Staff<span style="color:#9A7B2F;">o</span></div>'
     +'<div style="font-size:14px;font-weight:600;margin-top:2px;">Apuração do Inventário</div>'
     +'</div>'
     +'<div style="text-align:right;font-size:11px;color:#666;">'
@@ -1937,6 +2204,463 @@ function defaultProducts() {
     {cod:'2808',item:'COENTRO',unidade:'KG',valor:0},
     {cod:'2809',item:'VINAGRE',unidade:'LT',valor:0}
   ];
+}
+
+/* =========================================================
+   INVENTÁRIO G — dados e estado isolados
+   ========================================================= */
+var produtosG = [];
+var inventariosG = [];
+var currentInvG = null;
+var filterModeG = 'all';
+var printHistIdG = null;
+
+function defaultProductsG() {
+  return [
+    {cod:'621',item:'AGUA COM GAS PET 500',unidade:'UN',valor:7.0},
+    {cod:'620',item:'AGUA SEM GAS PET 500',unidade:'UN',valor:21.0},
+    {cod:'246',item:'AGUA TONICA LATA',unidade:'UN',valor:0.0},
+    {cod:'40',item:'ALFACE',unidade:'KG',valor:2.535},
+    {cod:'267',item:'ALHO PASTA SEM SAL',unidade:'KG',valor:0.0},
+    {cod:'275',item:'ALMONDEGA DE FRANGO',unidade:'UN',valor:0.0},
+    {cod:'80',item:'ARROZ TIPO 1',unidade:'KG',valor:20.918},
+    {cod:'154',item:'AZEITONA VERDE',unidade:'KG',valor:0.0},
+    {cod:'64',item:'BACON CUBOS',unidade:'KG',valor:1.5833},
+    {cod:'495',item:'BASE DE TOMATE',unidade:'KG',valor:0.4682},
+    {cod:'155',item:'BATATA CHIPS FRITOP',unidade:'KG',valor:0.0},
+    {cod:'30',item:'BATATA CONGELADA PALITO',unidade:'KG',valor:36.36},
+    {cod:'95',item:'BATATA EM FLOCOS',unidade:'KG',valor:1.344},
+    {cod:'688',item:'BATATA MAXI CHIPS',unidade:'KG',valor:0.4},
+    {cod:'710',item:'BATATA PALHA',unidade:'KG',valor:0.01},
+    {cod:'51',item:'BERINGELA',unidade:'KG',valor:8.2},
+    {cod:'5',item:'BISTECA SUINA',unidade:'UN',valor:23.0},
+    {cod:'711',item:'BRIGADEIRAO GRILETTO',unidade:'UN',valor:7.0},
+    {cod:'33',item:'BROCOLIS',unidade:'KG',valor:1.13},
+    {cod:'156',item:'CALABRESA FATIADA OPERADOR',unidade:'KG',valor:7.0},
+    {cod:'873',item:'CAMARAO MOLHO CATUPIRY',unidade:'KG',valor:0.0},
+    {cod:'128',item:'CANUDO EMBALADO',unidade:'UN',valor:173.0},
+    {cod:'231',item:'CARNE MOIDA',unidade:'KG',valor:0.12},
+    {cod:'47',item:'CEBOLA',unidade:'KG',valor:3.2},
+    {cod:'917',item:'CEBOLINHA',unidade:'KG',valor:2.1},
+    {cod:'44',item:'CENOURA',unidade:'KG',valor:9.1},
+    {cod:'876',item:'CENOURA BABY',unidade:'KG',valor:12.0},
+    {cod:'582',item:'CERVEJA BRAHAMA EXTRA LATA',unidade:'UN',valor:0.0},
+    {cod:'74',item:'CERVEJA BRAHMA DUPLO MALTE LATA',unidade:'UN',valor:0.0},
+    {cod:'579',item:'CERVEJA BRAHMA LATA',unidade:'UN',valor:3.0},
+    {cod:'659',item:'CERVEJA BUDWEISER LATA',unidade:'UN',valor:0.0},
+    {cod:'578',item:'CERVEJA SKOL LATA',unidade:'UN',valor:0.0},
+    {cod:'576',item:'CHOPP BRAHMA',unidade:'LT',valor:9.5},
+    {cod:'558',item:'COLHER DESCARTAVEL MEDIA',unidade:'UN',valor:0.0},
+    {cod:'387',item:'COLHER PARA SOBREMESA',unidade:'UN',valor:13.0},
+    {cod:'56',item:'CONJUNTO GARFO E FACA DESCARTAVEIS',unidade:'UN',valor:4.0},
+    {cod:'1',item:'CONTRA FILE 120 G',unidade:'UN',valor:17.0},
+    {cod:'517',item:'CONTRA FILE 180 G',unidade:'UN',valor:5.0},
+    {cod:'119',item:'COPO 200 ML',unidade:'UN',valor:77.0},
+    {cod:'554',item:'COPO 300 ML DESCARTAVEL',unidade:'UN',valor:30.0},
+    {cod:'125',item:'COPO 50 ML',unidade:'UN',valor:0.0},
+    {cod:'555',item:'COPO 500 ML DESCARTAVEL',unidade:'UN',valor:71.0},
+    {cod:'571',item:'COPO 700 ML DESCARTAVEL',unidade:'UN',valor:55.0},
+    {cod:'38',item:'COUVE MANTEIGA',unidade:'KG',valor:4.2},
+    {cod:'748',item:'EMBALAGEM 3 DIVISORIAS ISOPOR',unidade:'UN',valor:0.0},
+    {cod:'812',item:'EMBALAGEM 3 DIVISORIAS PP4H',unidade:'UN',valor:0.0},
+    {cod:'29',item:'EMBALAGEM DE ISOPOR LANCHETTO',unidade:'UN',valor:0.0},
+    {cod:'898',item:'EMBALAGEM PORCAO',unidade:'UN',valor:6.0},
+    {cod:'39',item:'EMBALAGEM RETANGULAR PP1 PRETO',unidade:'UN',valor:0.0},
+    {cod:'261',item:'EMBALAGEM RETANGULAR PP2 PRETO',unidade:'UN',valor:0.0},
+    {cod:'262',item:'EMBALAGEM RETANGULAR PP3 PRETO',unidade:'UN',valor:0.0},
+    {cod:'837',item:'EMBALAGEM RETANGULAR PP33',unidade:'UN',valor:0.0},
+    {cod:'263',item:'EMBALAGEM RETANGULAR PP4 PRETO',unidade:'UN',valor:0.0},
+    {cod:'277',item:'EMPANADO PRESUNTO E QUEIJO',unidade:'UN',valor:0.0},
+    {cod:'307',item:'ERVILHA EM CONSERVA',unidade:'KG',valor:0.0},
+    {cod:'327',item:'ETIQUETA COUCHE LACRE',unidade:'RL',valor:0.0},
+    {cod:'762',item:'ETIQUETA LACRE DELIVERY',unidade:'UN',valor:0.0},
+    {cod:'278',item:'ETIQUETA MILANETTO',unidade:'UN',valor:0.0},
+    {cod:'131',item:'FACA DESCARTAVEL',unidade:'UN',valor:0.0},
+    {cod:'59',item:'FARFALLE',unidade:'KG',valor:0.0},
+    {cod:'77',item:'FARINHA FIOCCOPAN MILANES',unidade:'KG',valor:2.19},
+    {cod:'82',item:'FARINHA MANDIOCA',unidade:'KG',valor:1.9268},
+    {cod:'81',item:'FEIJAO CARIOCA',unidade:'KG',valor:6.9705},
+    {cod:'561',item:'FEIJAO PRETO',unidade:'KG',valor:0.0333},
+    {cod:'819',item:'FETTUCCINE',unidade:'KG',valor:0.0},
+    {cod:'9',item:'FILE DE FRANGO 180 G',unidade:'UN',valor:0.0},
+    {cod:'7',item:'FILE MIGNON 220 G',unidade:'UN',valor:0.0},
+    {cod:'2',item:'FILEZINHO DE FRANGO 120 G',unidade:'UN',valor:143.0},
+    {cod:'811',item:'FLAT / STEAK ANGUS 220G',unidade:'UN',valor:1.0},
+    {cod:'562',item:'FOLHA DE LOURO',unidade:'KG',valor:0.0},
+    {cod:'630',item:'FRANGO A PASSARINHO',unidade:'KG',valor:0.0},
+    {cod:'877',item:'FRANGO DESFIADO',unidade:'KG',valor:0.0},
+    {cod:'226',item:'FRANGO RECHEADO',unidade:'UN',valor:0.0},
+    {cod:'71',item:'FUSILI',unidade:'KG',valor:0.0},
+    {cod:'130',item:'GARFO DESCARTAVEL',unidade:'UN',valor:0.0},
+    {cod:'589',item:'GUARANA ANTARCTICA LATA',unidade:'UN',valor:29.0},
+    {cod:'596',item:'GUARANA ANTARCTICA ZERO LATA',unidade:'UN',valor:16.0},
+    {cod:'766',item:'GUARANA ANTARTICA 1,5 LITROS',unidade:'UN',valor:0.0},
+    {cod:'406',item:'GUARDANAPO SACHE GRILETTO',unidade:'UN',valor:644.0},
+    {cod:'900',item:'GUARDANAPO SACHE MILANETTO',unidade:'UN',valor:0.0},
+    {cod:'635',item:'H20H LIMONETO',unidade:'UN',valor:25.0},
+    {cod:'619',item:'H2OH LIMAO',unidade:'UN',valor:15.0},
+    {cod:'412',item:'HAMBURGUER GRILETTO',unidade:'UN',valor:2.0},
+    {cod:'430',item:'KETCHUP',unidade:'LT',valor:0.0},
+    {cod:'865',item:'LA MUS ALPINO',unidade:'UN',valor:12.0},
+    {cod:'866',item:'LA MUS PRESTIGIO',unidade:'UN',valor:8.0},
+    {cod:'43',item:'LIMAO',unidade:'KG',valor:3.9},
+    {cod:'707',item:'LINGUICA TOSCANA',unidade:'KG',valor:6.36},
+    {cod:'410',item:'LOMBO SUINO 120 G',unidade:'UN',valor:1.0},
+    {cod:'682',item:'MAIONESE',unidade:'KG',valor:0.025},
+    {cod:'496',item:'MAIONESE SACHE 192X7G',unidade:'UN',valor:2.0},
+    {cod:'786',item:'MAMINHA EM ISCAS',unidade:'KG',valor:1.98},
+    {cod:'32',item:'MANDIOCA TOLETE',unidade:'KG',valor:5.6},
+    {cod:'891',item:'MAQUINADE CARTAO',unidade:'UN',valor:0.0},
+    {cod:'96',item:'MARGARINA',unidade:'KG',valor:0.094},
+    {cod:'129',item:'MARMITEX 3 DIVISORIAS ALUMINIO',unidade:'UN',valor:0.0},
+    {cod:'885',item:'MASSA DE PASTEL',unidade:'KG',valor:0.0},
+    {cod:'279',item:'MASSA PANQUECA',unidade:'KG',valor:0.0},
+    {cod:'306',item:'MILHO EM CONSERVA',unidade:'KG',valor:0.0},
+    {cod:'905',item:'MINI PASTEL CARNE',unidade:'UN',valor:0.0},
+    {cod:'906',item:'MINI PASTEL QUEIJO',unidade:'UN',valor:0.0},
+    {cod:'92',item:'MOLHO 4 QUEIJOS OPGR',unidade:'KG',valor:0.0},
+    {cod:'79',item:'MOLHO AMATRICIANA',unidade:'KG',valor:0.0},
+    {cod:'779',item:'MOLHO BARBECUE',unidade:'KG',valor:0.35},
+    {cod:'102',item:'MOLHO BOLOGNESA',unidade:'KG',valor:0.0},
+    {cod:'566',item:'MOLHO BRANCO',unidade:'KG',valor:0.0},
+    {cod:'104',item:'MOLHO CAIPIRA',unidade:'KG',valor:0.0},
+    {cod:'99',item:'MOLHO DE PIMENTA',unidade:'LT',valor:0.085},
+    {cod:'181',item:'MOLHO FRANGO CREMOSO (OPERADOR)',unidade:'KG',valor:0.0},
+    {cod:'781',item:'MOLHO MAIONESE COM ERVAS',unidade:'KG',valor:0.7},
+    {cod:'73',item:'MOLHO PARISIENSE',unidade:'KG',valor:0.0},
+    {cod:'308',item:'MOLHO PICADINHO',unidade:'KG',valor:0.0},
+    {cod:'105',item:'MOLHO POMODORO',unidade:'KG',valor:0.0},
+    {cod:'780',item:'MOLHO RANCH',unidade:'KG',valor:0.14},
+    {cod:'372',item:'MOLHO SALADA ITALIAN',unidade:'KG',valor:0.0},
+    {cod:'185',item:'MOLHO SALADA PARMESAN',unidade:'KG',valor:0.0},
+    {cod:'344',item:'MOLHO SALADA QUEIJO',unidade:'KG',valor:0.0},
+    {cod:'411',item:'MOLHO STROGONOFF',unidade:'KG',valor:1.33},
+    {cod:'139',item:'MORANGO',unidade:'KG',valor:0.0},
+    {cod:'499',item:'MOSTARDA SACHE 192X7G',unidade:'UN',valor:2.0},
+    {cod:'390',item:'MOUSSE HOLANDESA GRILETTO',unidade:'UN',valor:5.0},
+    {cod:'106',item:'NHOQUE',unidade:'KG',valor:0.0},
+    {cod:'782',item:'OLEO COMPOSTO',unidade:'LT',valor:0.0},
+    {cod:'97',item:'OLEO DE ALGODAO',unidade:'KG',valor:6.11},
+    {cod:'86',item:'OLEO DE SOJA',unidade:'LT',valor:1.825},
+    {cod:'232',item:'OREGANO',unidade:'KG',valor:0.0},
+    {cod:'50',item:'OVOS',unidade:'UN',valor:43.0},
+    {cod:'111',item:'PACOTE SOS KRAFT',unidade:'UN',valor:0.0},
+    {cod:'280',item:'PACOTE SOS KRAFT MILANETTO',unidade:'UN',valor:0.0},
+    {cod:'679',item:'PALITO DESCARTAVEL',unidade:'UN',valor:0.0},
+    {cod:'142',item:'PALITO SACHE',unidade:'UN',valor:355.0},
+    {cod:'186',item:'PALMITO PICADO',unidade:'KG',valor:0.0},
+    {cod:'78',item:'PAO LANCHETTO',unidade:'UN',valor:1.0},
+    {cod:'516',item:'PEITO BOVINO EM BIFE',unidade:'UN',valor:66.0},
+    {cod:'518',item:'PEITO BOVINO EM ISCAS',unidade:'UN',valor:33.0},
+    {cod:'709',item:'PENNE',unidade:'KG',valor:0.0},
+    {cod:'58',item:'PENNE INTEGRAL',unidade:'KG',valor:0.0},
+    {cod:'765',item:'PEPSI 1,5 LITROS',unidade:'UN',valor:0.0},
+    {cod:'590',item:'PEPSI COLA LATA',unidade:'UN',valor:38.0},
+    {cod:'591',item:'PEPSI TWIST LATA',unidade:'UN',valor:9.0},
+    {cod:'698',item:'PEPSI ZERO LATA',unidade:'UN',valor:2.0},
+    {cod:'773',item:'PICANHA 180G',unidade:'UN',valor:0.0},
+    {cod:'6',item:'PICANHA PREMIUM 110G',unidade:'UN',valor:18.0},
+    {cod:'31',item:'POLENTA PALITO',unidade:'KG',valor:1.85},
+    {cod:'343',item:'POTE 70ML',unidade:'UN',valor:26.0},
+    {cod:'847',item:'POTE DE PAPEL / FEIJAO',unidade:'UN',valor:0.0},
+    {cod:'829',item:'POTE PARA PORCAO',unidade:'UN',valor:0.0},
+    {cod:'55',item:'PRATO ISOPOR',unidade:'UN',valor:0.0},
+    {cod:'195',item:'PRESUNTO RALADO',unidade:'KG',valor:0.0},
+    {cod:'196',item:'QUEIJO CHEDDAR BISNAGA',unidade:'KG',valor:0.24},
+    {cod:'556',item:'QUEIJO MUSSARELA FATIADO',unidade:'KG',valor:0.965},
+    {cod:'557',item:'QUEIJO PARMESAO RALADO EM FIAPOS',unidade:'KG',valor:0.175},
+    {cod:'416',item:'SACHE AZEITE DE OLIVA',unidade:'UN',valor:0.0},
+    {cod:'145',item:'SACHE DE KETCHUP',unidade:'UN',valor:94.0},
+    {cod:'868',item:'SACHE MAIONESE',unidade:'UN',valor:0.0},
+    {cod:'415',item:'SACHE MOLHO PIMENTA',unidade:'UN',valor:0.0},
+    {cod:'140',item:'SACHE MOLHO SALADA 18 GRS',unidade:'UN',valor:85.0},
+    {cod:'869',item:'SACHE MOSTARDA',unidade:'UN',valor:0.0},
+    {cod:'61',item:'SACHE QUEIJO RALADO',unidade:'KG',valor:0.03},
+    {cod:'362',item:'SACO PARA TALHER GRILETTO',unidade:'UN',valor:341.0},
+    {cod:'315',item:'SACO PARA TALHER MILANETTO',unidade:'UN',valor:0.0},
+    {cod:'84',item:'SAL REFINADO',unidade:'KG',valor:1.2556},
+    {cod:'141',item:'SAL SACHE',unidade:'UN',valor:358.0},
+    {cod:'14',item:'SALMAO 200 G',unidade:'UN',valor:0.0},
+    {cod:'37',item:'SELO RETANGULAR PP1',unidade:'UN',valor:0.0},
+    {cod:'264',item:'SELO RETANGULAR PP2',unidade:'UN',valor:0.0},
+    {cod:'265',item:'SELO RETANGULAR PP3',unidade:'UN',valor:0.0},
+    {cod:'266',item:'SELO RETANGULAR PP4',unidade:'UN',valor:0.0},
+    {cod:'592',item:'SODA LIMONADA LATA',unidade:'UN',valor:14.0},
+    {cod:'72',item:'SPAGHETTI',unidade:'KG',valor:0.0},
+    {cod:'859',item:'SPATEN LATA',unidade:'UN',valor:0.0},
+    {cod:'810',item:'SUCO LARANJA NATURAL ONE',unidade:'UN',valor:8.0},
+    {cod:'798',item:'SUCO MACA NATURAL ONE',unidade:'UN',valor:0.0},
+    {cod:'799',item:'SUCO MARACUJA NATURAL ONE',unidade:'UN',valor:6.0},
+    {cod:'800',item:'SUCO UVA E MACA NATURAL ONE',unidade:'UN',valor:7.0},
+    {cod:'875',item:'SUCO UVA NATURAL ONE',unidade:'UN',valor:0.0},
+    {cod:'593',item:'SUKITA LARANJA LATA',unidade:'UN',valor:4.0},
+    {cod:'600',item:'SUKITA UVA LATA',unidade:'UN',valor:5.0},
+    {cod:'928',item:'TALHARINE',unidade:'KG',valor:0.2925},
+    {cod:'395',item:'TAMPA COPO 300 ML',unidade:'UN',valor:23.0},
+    {cod:'396',item:'TAMPA COPO 500 ML',unidade:'UN',valor:0.0},
+    {cod:'572',item:'TAMPA COPO 700 ML',unidade:'UN',valor:0.0},
+    {cod:'830',item:'TAMPA POTE PARA PORCAO',unidade:'UN',valor:0.0},
+    {cod:'90',item:'TEMPERO GRILL',unidade:'KG',valor:0.403},
+    {cod:'409',item:'TILAPIA CONGELADA',unidade:'UN',valor:5.0},
+    {cod:'894',item:'TIRAS DE LOMBO SUINO',unidade:'KG',valor:0.98},
+    {cod:'783',item:'TOALHA DESCARTAVEL',unidade:'CX',valor:0.0},
+    {cod:'41',item:'TOMATE SALADA',unidade:'KG',valor:4.4084},
+    {cod:'594',item:'TONICA ANTARCTICA LATA',unidade:'UN',valor:0.0},
+    {cod:'823',item:'TORTA BANOFFEE',unidade:'UN',valor:0.0},
+    {cod:'45',item:'VAGEM',unidade:'KG',valor:0.12},
+    {cod:'88',item:'VINAGRE LIMAO',unidade:'LT',valor:0.05},
+    {cod:'89',item:'VINAGRE TINTO',unidade:'LT',valor:0.1495}
+  ];
+}
+
+/* ── carrega/salva dados G com prefixo 'g_' ── */
+function _dbGetG(k) {
+  var chave = _empPrefix() + 'g_' + k;
+  var v = _cache[chave];
+  if (v === undefined || v === null) return null;
+  return JSON.parse(JSON.stringify(v));
+}
+function _dbSetG(k, v, cb) {
+  var chave = (k === 'empresas' || k === 'usuarios') ? k : (_empPrefix() + 'g_' + k);
+  _cache[chave] = v;
+  _persistir(cb);
+}
+
+function carregarDadosG() {
+  var pgRaw = _dbGetG('produtosG');
+  produtosG = Array.isArray(pgRaw) && pgRaw.length ? pgRaw : defaultProductsG();
+  if (!Array.isArray(pgRaw) || !pgRaw.length) _dbSetG('produtosG', produtosG);
+
+  var invgRaw = _dbGetG('inventariosG');
+  inventariosG = Array.isArray(invgRaw) ? invgRaw : [];
+
+  var curRaw = _dbGetG('currentInvG');
+  if (curRaw && typeof curRaw === 'object' && !Array.isArray(curRaw)) {
+    currentInvG = curRaw;
+  } else {
+    currentInvG = { mes:'', ano:new Date().getFullYear(), responsavel:'', data:new Date().toISOString().split('T')[0], itens:{}, fechado:false };
+  }
+
+  document.getElementById('invg-mes').value = currentInvG.mes || '';
+  document.getElementById('invg-ano').value = currentInvG.ano || new Date().getFullYear();
+  document.getElementById('invg-data').value = currentInvG.data || new Date().toISOString().split('T')[0];
+  if (currentInvG.fechado) {
+    document.getElementById('invg-status-badge').className='status-saved';
+    document.getElementById('invg-status-badge').textContent='✓ Fechado';
+  } else {
+    document.getElementById('invg-status-badge').className='status-open';
+    document.getElementById('invg-status-badge').textContent='● Em aberto';
+  }
+  populateSelectG();
+  renderInvTableG();
+  updateMetricsG();
+}
+
+function populateSelectG() {
+  var sel = document.getElementById('invg-responsavel');
+  var cur = currentInvG && currentInvG.responsavel ? currentInvG.responsavel : '';
+  sel.innerHTML='<option value="">Selecione...</option>';
+  funcionarios.forEach(function(f){
+    var o=document.createElement('option'); o.value=f; o.textContent=f; sel.appendChild(o);
+  });
+  sel.value=cur;
+}
+
+function calcTotalAtualG() {
+  return produtosG.reduce(function(s,p){ return s+((currentInvG.itens[p.cod]||0)*parseFloat(p.valor||0)); },0);
+}
+function calcTotalG(inv) {
+  return produtosG.reduce(function(s,p){ return s+((inv.itens[p.cod]||0)*parseFloat(p.valor||0)); },0);
+}
+
+function renderInvTableG() {
+  var filter = (document.getElementById('search-invg').value||'').toLowerCase();
+  var tbody = document.getElementById('invg-tbody');
+  tbody.innerHTML='';
+  var visible = produtosG.filter(function(p){
+    if (filterModeG==='nonzero') { if (!(currentInvG.itens[p.cod]||0)) return false; }
+    if (filter) return p.item.toLowerCase().includes(filter) || String(p.cod).includes(filter);
+    return true;
+  });
+  visible.forEach(function(p){
+    var qty = currentInvG.itens[p.cod] !== undefined ? currentInvG.itens[p.cod] : '';
+    var sub = (parseFloat(qty)||0) * parseFloat(p.valor||0);
+    var tr = document.createElement('tr');
+    tr.innerHTML='<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--text3)">'+p.cod+'</td>'
+      +'<td>'+p.item+'</td>'
+      +'<td class="td-center"><span class="badge badge-amber">'+p.unidade+'</span></td>'
+      +'<td class="td-num">'+fmtMoney(p.valor)+'</td>'
+      +'<td class="td-center"><input type="number" class="qty-input" min="0" step="0.001" value="'+qty+'" data-cod="'+p.cod+'" onchange="updateQtyG(this)" '+(currentInvG.fechado?'disabled':'')+'></td>'
+      +'<td class="td-num" id="subg-'+p.cod+'">'+(sub>0?fmtMoney(sub):'<span style="color:var(--text3)">—</span>')+'</td>';
+    tbody.appendChild(tr);
+  });
+  updateMetricsG();
+}
+
+function updateQtyG(input) {
+  var cod=input.dataset.cod, val=parseFloat(input.value)||0;
+  currentInvG.itens[cod]=val;
+  var p=produtosG.find(function(x){return x.cod===cod;});
+  var sub=val*parseFloat(p?p.valor:0);
+  var cell=document.getElementById('subg-'+cod);
+  if(cell) cell.innerHTML=sub>0?fmtMoney(sub):'<span style="color:var(--text3)">—</span>';
+  updateMetricsG();
+  _dbSetG('currentInvG', currentInvG);
+}
+
+function updateMetricsG() {
+  if(!currentInvG) return;
+  var total=calcTotalAtualG();
+  var contados=produtosG.filter(function(p){return (currentInvG.itens[p.cod]||0)>0;}).length;
+  var zerados=produtosG.filter(function(p){return !(currentInvG.itens[p.cod]||0);}).length;
+  document.getElementById('mg-total-itens').textContent=produtosG.length;
+  document.getElementById('mg-contados').textContent=contados;
+  document.getElementById('mg-zerados').textContent=zerados;
+  document.getElementById('mg-valor-total').textContent=fmtMoney(total);
+  document.getElementById('tfoot-totalg').textContent=fmtMoney(total);
+}
+
+function filterZeradosG(){filterModeG='nonzero';renderInvTableG();}
+function clearFilterG(){filterModeG='all';renderInvTableG();}
+
+async function salvarInventarioG() {
+  currentInvG.mes=document.getElementById('invg-mes').value;
+  currentInvG.ano=document.getElementById('invg-ano').value;
+  currentInvG.responsavel=document.getElementById('invg-responsavel').value;
+  currentInvG.data=document.getElementById('invg-data').value;
+
+  if (!currentInvG.mes)         { toast('Selecione o mês antes de salvar.', 'error'); return; }
+  if (!currentInvG.responsavel) { toast('Selecione o responsável antes de salvar.', 'error'); return; }
+
+  currentInvG.valorTotalEnc=await encryptValue(calcTotalAtualG().toFixed(2));
+  _dbSetG('currentInvG',currentInvG,function(){toast('Inventário G salvo!','success');});
+}
+
+function fecharInventarioG() {
+  currentInvG.mes=document.getElementById('invg-mes').value;
+  currentInvG.ano=document.getElementById('invg-ano').value;
+  currentInvG.responsavel=document.getElementById('invg-responsavel').value;
+  currentInvG.data=document.getElementById('invg-data').value;
+  if(!currentInvG.mes){toast('Selecione o mês antes de fechar.','error');return;}
+  if(!currentInvG.responsavel){toast('Selecione o responsável antes de fechar.','error');return;}
+  document.getElementById('print-content-g').innerHTML=buildPrintHTMLG(currentInvG,true);
+  document.getElementById('modal-print-g').classList.add('open');
+}
+
+async function confirmarFechamentoG() {
+  currentInvG.fechado=true;
+  currentInvG.id=Date.now();
+  currentInvG.savedAt=new Date().toISOString();
+  currentInvG.valorTotalEnc=await encryptValue(calcTotalG(currentInvG).toFixed(2));
+  inventariosG.push(JSON.parse(JSON.stringify(currentInvG)));
+  _dbSetG('inventariosG',inventariosG,function(){toast('✓ Inventário G arquivado!','success');});
+  currentInvG={mes:'',ano:new Date().getFullYear(),responsavel:'',data:new Date().toISOString().split('T')[0],itens:{},fechado:false};
+  _dbSetG('currentInvG',currentInvG);
+  closeModal('modal-print-g');
+  document.getElementById('invg-mes').value='';
+  document.getElementById('invg-responsavel').value='';
+  document.getElementById('invg-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('invg-status-badge').className='status-open';
+  document.getElementById('invg-status-badge').textContent='● Em aberto';
+  renderInvTableG();
+}
+
+function imprimirInventarioG(){printHTML(buildPrintHTMLG(currentInvG,false));}
+
+async function renderHistoricoG() {
+  var list = document.getElementById('histg-list');
+  document.getElementById('histg-count').textContent = inventariosG.length + ' registro(s)';
+  if (!inventariosG.length) {
+    list.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Nenhum inventário G arquivado.</div>';
+    return;
+  }
+  list.innerHTML='';
+  var sorted = [...inventariosG].reverse();
+  for (var i=0; i<sorted.length; i++) {
+    var inv=sorted[i];
+    var totalStr='';
+    if (inv.valorTotalEnc) {
+      try { var dec=await decryptValue(inv.valorTotalEnc); totalStr=fmtMoney(parseFloat(dec)||0); } catch(e){ totalStr=fmtMoney(calcTotalG(inv)); }
+    } else { totalStr=fmtMoney(calcTotalG(inv)); }
+    var div=document.createElement('div'); div.className='hist-item';
+    div.innerHTML='<div><div style="font-weight:600;font-size:14px">'+inv.mes+' / '+inv.ano+'</div>'
+      +'<div class="hist-meta">Responsável: '+(inv.responsavel||'—')+' · Data: '+fmtDate(inv.data)+' · '+Object.keys(inv.itens||{}).length+' itens</div></div>'
+      +'<div style="display:flex;align-items:center;gap:10px;">'
+      +'<div style="text-align:right"><div style="font-size:11px;color:var(--text3)">Valor Total 🔐</div>'
+      +'<div style="font-weight:600;font-family:\'JetBrains Mono\',monospace;color:#9A7B2F">'+totalStr+'</div></div>'
+      +'<button class="btn btn-sm" onclick="verInventarioG('+inv.id+')">Ver</button>'
+      +'<button class="btn btn-sm btn-success" onclick="printHistItemG('+inv.id+')">🖨️</button>'
+      +'<button class="btn btn-sm btn-danger" onclick="excluirHistG('+inv.id+')">🗑</button>'
+      +'</div>';
+    list.appendChild(div);
+  }
+}
+
+function verInventarioG(id) {
+  var inv=inventariosG.find(function(x){return x.id===id;});
+  if(!inv) return;
+  printHistIdG=id;
+  document.getElementById('modal-hist-title-g').textContent='Inventário G '+inv.mes+'/'+inv.ano;
+  document.getElementById('modal-hist-content-g').innerHTML=buildPrintHTMLG(inv,true);
+  document.getElementById('modal-hist-g').classList.add('open');
+}
+
+function printHistItemG(id){
+  var inv=inventariosG.find(function(x){return x.id===id;});
+  if(!inv) return;
+  printHTML(buildPrintHTMLG(inv,false));
+}
+function imprimirHistG(){if(printHistIdG)printHistItemG(printHistIdG);}
+
+function excluirHistG(id){
+  if(!confirm('Excluir este inventário G do histórico?')) return;
+  inventariosG=inventariosG.filter(function(x){return x.id!==id;});
+  _dbSetG('inventariosG',inventariosG);
+  renderHistoricoG();
+  toast('Inventário G excluído.','success');
+}
+
+function buildPrintHTMLG(inv, preview) {
+  var total=calcTotalG(inv);
+  var itens=produtosG; /* TODOS os produtos G, independente de quantidade */
+  var rows='';
+  itens.forEach(function(p){
+    var qty=inv.itens[p.cod]||0, sub=qty*parseFloat(p.valor||0);
+    rows+='<tr><td>'+p.cod+'</td><td>'+p.item+'</td><td style="text-align:center">'+p.unidade+'</td>'
+      +'<td style="text-align:right">'+fmtMoney(p.valor)+'</td>'
+      +'<td style="text-align:center">'+(qty>0?qty:'—')+'</td>'
+      +'<td style="text-align:right">'+(sub>0?fmtMoney(sub):'—')+'</td></tr>';
+  });
+  var style=preview?'max-height:400px;overflow-y:auto;':'';
+  return '<div style="'+style+'">'
+    +'<div style="font-family:\'Plus Jakarta Sans\',Arial,sans-serif;background:#fff;padding:'+(preview?'0':'20px')+';color:#000;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">'
+    +'<div><div style="font-size:22px;font-weight:900;font-family:Georgia,serif;color:#1C2033;"><span style="color:#9A7B2F;">Vic</span>Staff<span style="color:#9A7B2F;">o</span></div>'
+    +'<div style="font-size:14px;font-weight:600;margin-top:2px;">Apuração do Inventário G</div></div>'
+    +'<div style="text-align:right;font-size:11px;color:#666;">'
+    +'<div>Mês: <strong>'+(inv.mes||'—')+' / '+inv.ano+'</strong></div>'
+    +'<div>Responsável: <strong>'+(inv.responsavel||'—')+'</strong></div>'
+    +'<div>Data: <strong>'+fmtDate(inv.data)+'</strong></div>'
+    +'<div>Gerado em: '+new Date().toLocaleString('pt-BR')+'</div>'
+    +'</div></div>'
+    +'<hr style="border:none;border-top:2px solid #9A7B2F;margin-bottom:12px;">'
+    +'<table style="width:100%;border-collapse:collapse;font-size:11px;">'
+    +'<thead><tr style="background:#FFF8ED;">'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:left;">Cód.</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:left;">Item</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:center;">Unid.</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:right;">Vl. Compra</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:center;">Qtd.</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:right;">Vl. Total</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody>'
+    +'<tfoot><tr style="background:#FFF8ED;font-weight:700;">'
+    +'<td colspan="5" style="border:1px solid #ddd;padding:6px 7px;text-align:right;font-size:12px;">VALOR TOTAL DO INVENTÁRIO G (R$)</td>'
+    +'<td style="border:1px solid #ddd;padding:6px 7px;text-align:right;font-size:13px;color:#9A7B2F;">'+fmtMoney(total)+'</td>'
+    +'</tr></tfoot></table>'
+    +'<div style="margin-top:32px;display:flex;gap:40px;">'
+    +'<div style="flex:1;text-align:center;border-top:1px solid #999;padding-top:6px;font-size:11px;">Responsável pelo Inventário</div>'
+    +'<div style="flex:1;text-align:center;border-top:1px solid #999;padding-top:6px;font-size:11px;">Conferência</div>'
+    +'</div></div></div>';
 }
 
 /* =========================================================
