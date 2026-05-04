@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Inventário — VicStaffo</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F2F4F8;
+    --surface: #FFFFFF;
+    --surface2: #F7F8FB;
+    --surface3: #EEF0F6;
+    --border: rgba(99,110,146,0.13);
+    --border2: rgba(99,110,146,0.25);
+    --text: #1C2033;
+    --text2: #5A6080;
+    --text3: #9BA3BF;
+    --accent: #E05A1C;
+    --accent2: #F97316;
+    --accent-bg: #FFF3ED;
+    --accent-border: rgba(224,90,28,0.2);
+    --accent-text: #9A3412;
+    --green: #16A34A;
+    --green-bg: #F0FDF4;
+    --green-border: rgba(22,163,74,0.2);
+    --blue: #2563EB;
+    --blue-bg: #EFF6FF;
+    --amber: #D97706;
+    --amber-bg: #FFFBEB;
+    --amber-border: rgba(217,119,6,0.2);
+    --danger: #DC2626;
+    --danger-bg: #FEF2F2;
+    --danger-border: rgba(220,38,38,0.18);
+    --radius: 14px;
+    --radius-sm: 8px;
+    --radius-xs: 5px;
+    --shadow-sm: 0 1px 3px rgba(28,32,51,0.07), 0 1px 2px rgba(28,32,51,0.05);
+    --shadow-md: 0 4px 16px rgba(28,32,51,0.09), 0 2px 6px rgba(28,32,51,0.06);
+    --shadow-lg: 0 12px 40px rgba(28,32,51,0.14), 0 4px 12px rgba(28,32,51,0.08);
+    --gold: #a07828;
+    --gold-light: #c49a3a;
+    --red: #c04a3a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
+  /* ── LOGIN ── */
+  #login-screen { display:none; position:fixed; inset:0; background:linear-gradient(135deg,#f5f3ef 0%,#ede9e1 100%); z-index:9999; align-items:center; justify-content:center; flex-direction:column; }
+  #login-screen.open { display:flex; }
+  .login-box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:44px 40px; max-width:400px; width:90%; text-align:center; box-shadow:var(--shadow-lg); }
+  .login-logo { font-size:22px; font-weight:800; color:var(--accent); margin-bottom:4px; letter-spacing:-0.5px; }
+  .login-logo span { color:var(--text2); font-weight:600; }
+  .login-sub { font-size:13px; color:var(--text3); margin-bottom:28px; }
+  .login-field { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; text-align:left; }
+  .login-field label { font-size:11px; font-weight:700; color:var(--text2); letter-spacing:0.5px; text-transform:uppercase; }
+  .login-input { background:var(--surface2); border:1.5px solid var(--border2); border-radius:8px; padding:11px 14px; color:var(--text); font-family:inherit; font-size:14px; outline:none; width:100%; transition:border-color 0.18s,box-shadow 0.18s; }
+  .login-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(224,90,28,0.12); }
+  .login-error { color:var(--danger); font-size:12px; min-height:18px; margin-bottom:10px; }
+  .login-btn { width:100%; padding:12px; border:none; border-radius:8px; background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(224,90,28,0.3); transition:all 0.18s; }
+  .login-btn:hover { box-shadow:0 4px 16px rgba(224,90,28,0.4); filter:brightness(1.06); transform:translateY(-1px); }
+
+  /* ── TOPBAR ── */
+  .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 28px; display:flex; align-items:center; height:62px; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-sm); gap:12px; flex-wrap:wrap; }
+  .logo { display:flex; align-items:center; gap:10px; margin-right:20px; white-space:nowrap; }
+  .logo-icon { width:34px; height:34px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; box-shadow:0 2px 8px rgba(224,90,28,0.35); }
+  .logo-text { font-size:16px; font-weight:700; color:var(--text); letter-spacing:-0.3px; }
+  .logo-text span { color:var(--accent); }
+  .nav-tabs { display:flex; gap:4px; flex-wrap:wrap; }
+  .nav-tab { padding:7px 15px; border-radius:30px; cursor:pointer; font-size:13px; font-weight:500; color:var(--text2); border:none; background:transparent; white-space:nowrap; transition:all 0.18s; }
+  .nav-tab:hover { background:var(--surface3); color:var(--text); }
+  .nav-tab.active { background:var(--accent); color:#fff; box-shadow:0 2px 8px rgba(224,90,28,0.3); }
+  .topbar-right { display:flex; gap:8px; align-items:center; margin-left:auto; }
+  .btn-logout { background:transparent; border:1px solid var(--border2); color:var(--text2); padding:6px 12px; font-size:12px; border-radius:6px; cursor:pointer; font-family:inherit; font-weight:600; transition:all 0.18s; }
+  .btn-logout:hover { border-color:var(--danger); color:var(--danger); }
+  #gh-status { font-size:12px; font-weight:600; }
+  #header-user-info { display:none; align-items:center; gap:8px; font-size:13px; color:var(--text2); }
+  #header-empresa-switcher { display:none; align-items:center; gap:6px; }
+  #super-empresa-sel { background:var(--surface2); border:1px solid var(--border2); border-radius:6px; padding:5px 8px; color:var(--text); font-family:inherit; font-size:12px; outline:none; max-width:180px; }
+
+  /* ── LAYOUT ── */
+  .main { padding:28px; max-width:1220px; margin:0 auto; }
+  .section { display:none; animation:fadeUp 0.22s ease; }
+  .section.active { display:block; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+  /* ── CARDS ── */
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; margin-bottom:18px; box-shadow:var(--shadow-sm); transition:box-shadow 0.2s; }
+  .card:hover { box-shadow:var(--shadow-md); }
+  .card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+  .card-title { font-size:11px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:0.8px; }
+
+  /* ── METRIC GRID ── */
+  .metric-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin-bottom:22px; }
+  .metric { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow-sm); position:relative; overflow:hidden; transition:box-shadow 0.2s,transform 0.2s; }
+  .metric:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+  .metric::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:14px 14px 0 0; opacity:0; transition:opacity 0.2s; }
+  .metric:hover::before { opacity:1; }
+  .metric-label { font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.7px; margin-bottom:8px; }
+  .metric-value { font-size:24px; font-weight:700; color:var(--text); font-family:'JetBrains Mono',monospace; letter-spacing:-0.5px; }
+  .metric-value.accent { color:var(--accent); }
+  .metric-value.green { color:var(--green); }
+
+  /* ── FORMS ── */
+  .form-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
+  .form-group { display:flex; flex-direction:column; gap:7px; }
+  label { font-size:12px; font-weight:600; color:var(--text2); }
+  input, select, textarea { padding:9px 13px; border:1.5px solid var(--border2); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; color:var(--text); background:var(--surface); outline:none; transition:border-color 0.18s,box-shadow 0.18s; }
+  input:focus, select:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(224,90,28,0.12); }
+  input[readonly] { background:var(--surface2); color:var(--text2); }
+
+  /* ── BUTTONS ── */
+  .btn { padding:8px 16px; border-radius:8px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border:1.5px solid var(--border2); background:var(--surface); color:var(--text2); transition:all 0.18s; white-space:nowrap; }
+  .btn:hover { background:var(--surface3); color:var(--text); transform:translateY(-1px); box-shadow:var(--shadow-sm); }
+  .btn-primary { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-color:transparent; box-shadow:0 2px 8px rgba(224,90,28,0.3); }
+  .btn-primary:hover { box-shadow:0 4px 16px rgba(224,90,28,0.4); filter:brightness(1.06); }
+  .btn-success { background:linear-gradient(135deg,#16A34A,#22C55E); color:#fff; border-color:transparent; box-shadow:0 2px 8px rgba(22,163,74,0.25); }
+  .btn-success:hover { box-shadow:0 4px 14px rgba(22,163,74,0.35); filter:brightness(1.06); }
+  .btn-danger { background:var(--danger-bg); color:var(--danger); border-color:var(--danger-border); }
+  .btn-danger:hover { background:#FEE2E2; }
+  .btn-sm { padding:5px 12px; font-size:12px; border-radius:6px; }
+  .btn-icon { width:32px; height:32px; padding:0; display:inline-flex; align-items:center; justify-content:center; font-size:15px; border-radius:8px; }
+  .btn-group { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn-ghost-blue { background:transparent; border:1px solid var(--blue); color:var(--blue); padding:6px 12px; font-size:12px; border-radius:6px; cursor:pointer; font-family:inherit; font-weight:600; transition:all 0.18s; }
+  .btn-ghost-blue:hover { background:var(--blue); color:#fff; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x:auto; border-radius:var(--radius-sm); border:1px solid var(--border); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead tr { background:var(--surface2); }
+  th { padding:10px 14px; text-align:left; font-size:11px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:0.7px; white-space:nowrap; border-bottom:1px solid var(--border); }
+  td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tbody tr { transition:background 0.12s; }
+  tbody tr:hover td { background:var(--accent-bg); }
+  .td-num { text-align:right; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text2); }
+  .td-center { text-align:center; }
+  .badge { display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; }
+  .badge-green { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+  .badge-amber { background:var(--amber-bg); color:var(--amber); border:1px solid var(--amber-border); }
+  .badge-red { background:var(--danger-bg); color:var(--danger); border:1px solid var(--danger-border); }
+  .badge-blue { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(37,99,235,0.2); }
+
+  /* ── TOTAL ROW ── */
+  .total-row td { background:var(--accent-bg); font-weight:700; border-top:2px solid var(--accent-border); color:var(--accent-text); }
+
+  /* ── SEARCH ── */
+  .search-bar { display:flex; gap:10px; margin-bottom:14px; align-items:center; }
+  .search-wrap { position:relative; flex:1; }
+  .search-wrap input { padding-left:36px; width:100%; }
+  .search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--text3); pointer-events:none; }
+
+  /* ── MODAL ── */
+  .modal-backdrop { display:none; position:fixed; inset:0; background:rgba(10,12,24,0.45); backdrop-filter:blur(4px); z-index:200; align-items:center; justify-content:center; }
+  .modal-backdrop.open { display:flex; }
+  .modal { background:var(--surface); border-radius:18px; padding:28px; width:520px; max-width:95vw; max-height:90vh; overflow-y:auto; border:1px solid var(--border); box-shadow:var(--shadow-lg); animation:modalIn 0.22s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes modalIn { from { opacity:0; transform:scale(0.94) translateY(8px); } to { opacity:1; transform:none; } }
+  .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+  .modal-title { font-size:17px; font-weight:700; color:var(--text); }
+  .modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:22px; padding-top:16px; border-top:1px solid var(--border); }
+
+  /* ── TOAST ── */
+  .toast-container { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+  .toast { background:#1C2033; color:#fff; padding:11px 18px; border-radius:10px; font-size:13px; font-weight:500; animation:toastIn 0.25s cubic-bezier(0.34,1.4,0.64,1); max-width:320px; box-shadow:var(--shadow-md); }
+  .toast.success { background:linear-gradient(135deg,#16A34A,#22C55E); }
+  .toast.error { background:linear-gradient(135deg,#DC2626,#EF4444); }
+  .toast.info { background:linear-gradient(135deg,#2563EB,#3B82F6); }
+  @keyframes toastIn { from { transform:translateX(24px) scale(0.95); opacity:0; } to { transform:none; opacity:1; } }
+
+  /* ── INVENTORY ── */
+  .inv-header-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; align-items:end; }
+  .qty-input { width:76px; padding:5px 9px; border:1.5px solid var(--border2); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:12px; text-align:right; transition:border-color 0.15s,box-shadow 0.15s; background:var(--surface2); }
+  .qty-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(224,90,28,0.1); outline:none; background:white; }
+  .status-saved { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--green); background:var(--green-bg); border:1px solid var(--green-border); padding:5px 12px; border-radius:20px; }
+  .status-open { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--amber); background:var(--amber-bg); border:1px solid var(--amber-border); padding:5px 12px; border-radius:20px; }
+
+  /* ── HIST ── */
+  .hist-item { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border); transition:background 0.12s; }
+  .hist-item:first-child { border-radius:var(--radius-sm) var(--radius-sm) 0 0; }
+  .hist-item:last-child { border-bottom:none; border-radius:0 0 var(--radius-sm) var(--radius-sm); }
+  .hist-item:hover { background:var(--accent-bg); }
+  .hist-meta { font-size:12px; color:var(--text3); margin-top:3px; font-weight:500; }
+
+  /* ── PAGE TITLE ── */
+  .page-hero { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+  .page-hero-title { font-size:22px; font-weight:700; color:var(--text); letter-spacing:-0.4px; }
+  .page-hero-sub { font-size:13px; color:var(--text3); margin-top:2px; font-weight:500; }
+
+  /* ── USUARIOS ── */
+  .user-item { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; background:var(--surface2); transition:border-color 0.18s,box-shadow 0.18s; }
+  .user-item:hover { border-color:var(--accent-border); box-shadow:var(--shadow-sm); }
+  .perm-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; margin-top:10px; }
+  .perm-item { display:flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid var(--border); border-radius:8px; cursor:pointer; user-select:none; font-size:13px; }
+  .perm-item:hover { border-color:var(--accent-border); background:var(--accent-bg); }
+  .perm-item input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; flex-shrink:0; }
+  .perm-badge { display:inline-block; font-size:10px; padding:2px 7px; border-radius:10px; background:var(--accent-bg); color:var(--accent-text); font-weight:600; }
+
+  /* ── GITHUB MODAL ── */
+  .ghcfg-box { background:var(--surface); border:1px solid var(--accent-border); border-radius:18px; padding:32px; max-width:480px; width:95%; box-shadow:var(--shadow-lg); }
+
+  /* ── DIVIDER ── */
+  .divider { border:none; border-top:1px solid var(--border); margin:16px 0; }
+
+  @media (max-width:700px) {
+    .inv-header-grid { grid-template-columns:1fr 1fr; }
+    .metric-row { grid-template-columns:1fr 1fr; }
+    .topbar { padding:0 16px; height:auto; padding-top:10px; padding-bottom:10px; }
+    .main { padding:16px; }
+  }
+
+  @media print {
+    body * { display:none !important; }
+    #print-area, #print-area * { display:block !important; }
+    #print-area { position:fixed; top:0; left:0; width:100%; }
+    #login-screen { display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="open">
+  <div class="login-box">
+    <div class="login-logo">VicStaffo <span>Inventário</span></div>
+    <div class="login-sub">Faça login para continuar</div>
+    <div class="login-field">
+      <label>Usuário</label>
+      <input type="text" class="login-input" id="login-user" placeholder="Digite seu usuário" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" class="login-input" id="login-pass" placeholder="Digite sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+    <div class="login-field" id="login-empresa-row" style="display:none;">
+      <label>Empresa</label>
+      <select class="login-input" id="login-empresa"></select>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <button class="login-btn" id="login-btn" onclick="fazerLogin()">🔑 Entrar</button>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar" id="main-topbar" style="display:none;">
+  <div class="logo">
+    <div class="logo-icon">🏪</div>
+    <div class="logo-text"><span>VicStaffo</span> Inventário</div>
+  </div>
+  <div id="header-empresa-nome" style="font-size:11px;color:var(--text3);margin-right:12px;font-weight:500;"></div>
+  <div class="nav-tabs" id="main-nav">
+    <button class="nav-tab active" id="nav-inventario" onclick="goTab('inventario',this)">📦 Inventário</button>
+    <button class="nav-tab" id="nav-produtos" onclick="goTab('produtos',this)">🗃️ Produtos</button>
+    <button class="nav-tab" id="nav-historico" onclick="goTab('historico',this)">📋 Histórico</button>
+    <button class="nav-tab" id="nav-usuarios" onclick="goTab('usuarios',this)">🔐 Usuários</button>
+    <button class="nav-tab" id="nav-empresas" onclick="goTab('empresas',this)" style="display:none;">🏢 Empresas</button>
+  </div>
+  <div class="topbar-right">
+    <div id="header-empresa-switcher" style="display:none;align-items:center;gap:6px;">
+      <span style="font-size:11px;color:var(--text3);">🌐 Empresa:</span>
+      <select id="super-empresa-sel" onchange="superTrocarEmpresa(this.value)">
+        <option value="">— Todas —</option>
+      </select>
+    </div>
+    <div id="header-user-info">
+      <span style="font-size:13px;color:var(--text2);">👤 <strong id="header-username"></strong></span>
+      <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+    </div>
+    <span id="gh-status" style="font-size:12px;font-weight:600;color:var(--amber);">⏳ Carregando...</span>
+    <button class="btn-ghost-blue" onclick="abrirGHConfig()" title="Configurar GitHub">⚙️ GitHub</button>
+    <button class="btn-ghost-blue" onclick="sincronizar()" title="Sincronizar">🔄 Sync</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-content" style="display:none;">
+
+  <!-- ===================== INVENTÁRIO ===================== -->
+  <div id="sec-inventario" class="section active">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">📦 Inventário Atual</div>
+        <div class="page-hero-sub">Contagem e valorização do estoque</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Cabeçalho do Inventário</div>
+        <div id="inv-status-badge" class="status-open">● Em aberto</div>
+      </div>
+      <div class="inv-header-grid">
+        <div class="form-group">
+          <label>Mês de Referência</label>
+          <select id="inv-mes">
+            <option value="">Selecione...</option>
+            <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+            <option>Abril</option><option>Maio</option><option>Junho</option>
+            <option>Julho</option><option>Agosto</option><option>Setembro</option>
+            <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ano</label>
+          <input type="number" id="inv-ano" value="2025" min="2020" max="2099">
+        </div>
+        <div class="form-group">
+          <label>Responsável pelo Inventário</label>
+          <select id="inv-responsavel"><option value="">Selecione...</option></select>
+        </div>
+        <div class="form-group">
+          <label>Data do Inventário</label>
+          <input type="date" id="inv-data">
+        </div>
+      </div>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric"><div class="metric-label">Total de Itens</div><div class="metric-value" id="m-total-itens">—</div></div>
+      <div class="metric"><div class="metric-label">Itens Contados</div><div class="metric-value green" id="m-contados">—</div></div>
+      <div class="metric"><div class="metric-label">Itens Zerados</div><div class="metric-value" id="m-zerados">—</div></div>
+      <div class="metric">
+        <div class="metric-label">Valor Total do Inventário 🔐</div>
+        <div class="metric-value accent" id="m-valor-total">R$ —</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px;">Valor criptografado no banco</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Itens do Inventário</div>
+        <div class="btn-group">
+          <button class="btn btn-sm" onclick="filterZerados()">Somente c/ qtd</button>
+          <button class="btn btn-sm" onclick="clearFilter()">Todos</button>
+          <button class="btn btn-success btn-sm" id="btn-salvar-inv" onclick="salvarInventario()">💾 Salvar</button>
+          <button class="btn btn-primary btn-sm" id="btn-fechar-inv" onclick="fecharInventario()">🔒 Fechar e Imprimir</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-inv" placeholder="Buscar item..." oninput="renderInvTable()">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="inv-table">
+          <thead>
+            <tr>
+              <th>Cód.</th><th>Item</th><th>Unid.</th>
+              <th style="text-align:right">Valor Compra (R$)</th>
+              <th style="text-align:center">Quantidade</th>
+              <th style="text-align:right">Valor Total (R$)</th>
+            </tr>
+          </thead>
+          <tbody id="inv-tbody"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="5" style="text-align:right;padding-right:16px;font-size:12px">VALOR TOTAL DO INVENTÁRIO</td>
+              <td class="td-num" id="tfoot-total">R$ 0,00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PRODUTOS ===================== -->
+  <div id="sec-produtos" class="section">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">🗃️ Cadastro de Produtos</div>
+        <div class="page-hero-sub">Gerencie os itens e funcionários do inventário</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title" id="prod-form-title">Novo Produto</div>
+        <button class="btn btn-sm" onclick="resetProdForm()">+ Novo</button>
+      </div>
+      <div class="form-row" style="grid-template-columns:120px 1fr 100px 160px;">
+        <div class="form-group"><label>Código</label><input type="text" id="p-cod" placeholder="Ex: 2501"></div>
+        <div class="form-group"><label>Item / Descrição</label><input type="text" id="p-item" placeholder="Nome do produto"></div>
+        <div class="form-group">
+          <label>Unidade</label>
+          <select id="p-unidade"><option>UN</option><option>KG</option><option>LT</option><option>RL</option><option>CX</option><option>PC</option><option>L</option></select>
+        </div>
+        <div class="form-group"><label>Valor de Compra (R$)</label><input type="number" id="p-valor" placeholder="0,00" step="0.01" min="0"></div>
+      </div>
+      <div style="margin-top:14px;" class="btn-group">
+        <button class="btn btn-primary" onclick="salvarProduto()">Salvar Produto</button>
+        <button class="btn" onclick="resetProdForm()">Cancelar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Lista de Produtos Cadastrados</div>
+        <div style="font-size:12px;color:var(--text3)" id="prod-count"></div>
+      </div>
+      <div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);">
+        <div class="card-title" style="margin-bottom:10px;">Funcionários / Responsáveis</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="func-nome" placeholder="Nome do funcionário" style="width:220px">
+          <button class="btn btn-sm btn-primary" onclick="adicionarFuncionario()">Adicionar</button>
+          <div id="func-list" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+      </div>
+      <div class="search-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-prod" placeholder="Buscar produto..." oninput="renderProdTable()">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Cód.</th><th>Item</th><th>Unid.</th><th style="text-align:right">Valor Compra (R$)</th><th style="text-align:center">Ações</th></tr></thead>
+          <tbody id="prod-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== HISTÓRICO ===================== -->
+  <div id="sec-historico" class="section">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">📋 Histórico de Inventários</div>
+        <div class="page-hero-sub">Inventários fechados e arquivados</div>
+      </div>
+      <span style="font-size:12px;color:var(--text3)" id="hist-count"></span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Inventários Salvos</div>
+      </div>
+      <div id="hist-list"><div style="padding:24px;text-align:center;color:var(--text3)">Nenhum inventário salvo.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== USUÁRIOS ===================== -->
+  <div id="sec-usuarios" class="section">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">🔐 Gestão de Usuários</div>
+        <div class="page-hero-sub">Controle de acesso e permissões por módulo</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">Novo Usuário</div>
+        <div class="form-group" style="margin-bottom:12px;"><label>Nome de Usuário</label><input type="text" id="usr-nome" placeholder="login do usuário"></div>
+        <div class="form-group" style="margin-bottom:12px;"><label>Senha (mín. 4 caracteres)</label><input type="password" id="usr-senha" placeholder="••••"></div>
+        <div class="form-group" style="margin-bottom:12px;"><label>Confirmar Senha</label><input type="password" id="usr-senha2" placeholder="••••"></div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Perfil</label>
+          <select id="usr-perfil" onchange="onUsrPerfilChange()">
+            <option value="operador">Operador</option>
+            <option value="admin">Administrador</option>
+            <option id="usr-opt-super" value="superadmin">Super Administrador</option>
+          </select>
+        </div>
+        <div id="usr-empresa-row" style="margin-bottom:12px;">
+          <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:8px;">Empresas com Acesso</label>
+          <div id="usr-empresa-grid" class="perm-grid"></div>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:8px;">Permissões de Módulos</label>
+          <div class="perm-grid" id="perm-novo-grid">
+            <label class="perm-item"><input type="checkbox" value="inventario" checked disabled> 📦 Inventário</label>
+            <label class="perm-item"><input type="checkbox" value="produtos"> 🗃️ Produtos</label>
+            <label class="perm-item"><input type="checkbox" value="historico"> 📋 Histórico</label>
+            <label class="perm-item"><input type="checkbox" value="usuarios"> 🔐 Usuários</label>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="addUsuario()">+ Cadastrar Usuário</button>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">Usuários Cadastrados</div>
+        <div id="lista-usuarios"><div style="padding:24px;text-align:center;color:var(--text3)">Nenhum usuário.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== EMPRESAS ===================== -->
+  <div id="sec-empresas" class="section">
+    <div class="page-hero">
+      <div>
+        <div class="page-hero-title">🏢 Gerenciar Empresas</div>
+        <div class="page-hero-sub">Cadastre as empresas e vincule usuários a elas</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">Nova Empresa</div>
+        <div class="form-group" style="margin-bottom:12px;"><label>Nome da Empresa</label><input type="text" id="emp-nome" placeholder="Ex.: VicStaffo Centro"></div>
+        <div class="form-group" style="margin-bottom:16px;"><label>Endereço (opcional)</label><input type="text" id="emp-end" placeholder="Ex.: Rua das Flores, 123"></div>
+        <button class="btn btn-primary" onclick="addEmpresa()">+ Adicionar Empresa</button>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">Empresas Cadastradas</div>
+        <div id="lista-empresas"><div style="padding:24px;text-align:center;color:var(--text3)">🏢 Nenhuma empresa</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- MODAL IMPRIMIR / FECHAR -->
+<div class="modal-backdrop" id="modal-print">
+  <div class="modal" style="width:700px;">
+    <div class="modal-header">
+      <div class="modal-title">Fechar e Imprimir Inventário</div>
+      <button class="btn btn-icon" onclick="closeModal('modal-print')">✕</button>
+    </div>
+    <div id="print-content"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-print')">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarFechamento()">🔒 Confirmar Fechamento</button>
+      <button class="btn btn-success" onclick="imprimirInventario()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VER HISTÓRICO -->
+<div class="modal-backdrop" id="modal-hist">
+  <div class="modal" style="width:700px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-hist-title">Inventário</div>
+      <button class="btn btn-icon" onclick="closeModal('modal-hist')">✕</button>
+    </div>
+    <div id="modal-hist-content"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('modal-hist')">Fechar</button>
+      <button class="btn btn-success" onclick="imprimirHist()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</div>
+
+<!-- GITHUB CONFIG MODAL -->
+<div id="modal-ghcfg" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:3000;align-items:center;justify-content:center;">
+  <div class="ghcfg-box">
+    <h3 style="font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;">⚙️ Configuração GitHub</h3>
+    <p style="font-size:13px;color:var(--text3);margin-bottom:20px;">Os dados serão salvos no seu repositório GitHub e ficam acessíveis em qualquer computador.</p>
+    <div class="form-group" style="margin-bottom:12px;"><label>Usuário GitHub</label><input type="text" id="gh-user" placeholder="seu-usuario"></div>
+    <div class="form-group" style="margin-bottom:12px;"><label>Repositório</label><input type="text" id="gh-repo" placeholder="vicstaffo-inventario-db"></div>
+    <div class="form-group" style="margin-bottom:12px;"><label>Branch</label><input type="text" id="gh-branch" placeholder="main" value="main"></div>
+    <div class="form-group" style="margin-bottom:16px;"><label>Token (ghp_...)</label><input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx"></div>
+    <div style="margin-bottom:16px;"><span id="gh-test-status" style="font-size:12px;"></span></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="salvarGHConfig()">✓ Salvar e Conectar</button>
+      <button class="btn" onclick="fecharGHConfig()">Cancelar</button>
+      <button class="btn-ghost-blue" onclick="limparGHConfig()" style="margin-left:auto;">🗑️ Desconectar</button>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:14px;">O token é salvo apenas localmente neste navegador. O arquivo de dados é salvo em <code style="color:var(--accent)">db/dados.json</code> no repositório.<br><br>🔐 <strong>Segurança:</strong> O valor total dos inventários é criptografado com AES-GCM 256-bit usando uma chave exclusiva deste dispositivo.</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toasts"></div>
+
+<!-- ÁREA DE IMPRESSÃO REAL -->
+<div id="print-area" style="display:none"></div>
+
+<script>
+'use strict';
+/* =========================================================
+   CONSTANTES
+   ========================================================= */
+var STORAGE_KEY  = 'vicstaffo_inv_db';
+var GH_CFG_KEY   = 'vicstaffo_inv_gh_cfg';
+var GH_FILE      = 'db/dados.json';
+
+/* =========================================================
+   ESTADO DE SESSÃO
+   ========================================================= */
+var _usuarioLogado = null;
+var _empresaAtiva  = null; /* { id, nome } — null se superadmin sem filtro */
+var _cache         = {};
+var _currentSha    = null;
+var _ultimoHash    = '';
+var _autoSyncInterval = null;
+
+/* Dados de aplicação */
+var produtos      = [];
+var funcionarios  = [];
+var inventarios   = [];
+var currentInv    = null;
+var filterMode    = 'all';
+var editingProd   = null;
+var printHistId   = null;
+
+/* =========================================================
+   HELPERS DE EMPRESA
+   ========================================================= */
+function _empPrefix() {
+  return _empresaAtiva ? 'emp_' + _empresaAtiva.id + '_' : '';
+}
+function _getEmpresas() {
+  var lista = _cache['empresas'];
+  return Array.isArray(lista) ? JSON.parse(JSON.stringify(lista)) : [];
+}
+function _setEmpresas(lista, cb) { DB.set('empresas', lista, cb); }
+
+/* =========================================================
+   DB — leitura/escrita com prefixo de empresa
+   ========================================================= */
+var DB = {
+  uid: function(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,5); },
+
+  get: function(k) {
+    var chave = _empPrefix() + k;
+    var v = _cache[chave];
+    if (!Array.isArray(v) && v === undefined || v === null) {
+      if (_empPrefix() && Array.isArray(_cache[k])) {
+        _cache[chave] = JSON.parse(JSON.stringify(_cache[k]));
+        delete _cache[k];
+        v = _cache[chave];
+      } else {
+        /* Para objetos (currentInv) */
+        if (typeof _cache[chave] === 'object' && _cache[chave] !== null && !Array.isArray(_cache[chave])) {
+          return JSON.parse(JSON.stringify(_cache[chave]));
+        }
+        return Array.isArray(_cache[chave]) ? JSON.parse(JSON.stringify(_cache[chave])) : (_cache[chave] || null);
+      }
+    }
+    if (Array.isArray(v)) return JSON.parse(JSON.stringify(v));
+    if (typeof v === 'object' && v !== null) return JSON.parse(JSON.stringify(v));
+    return v;
+  },
+
+  set: function(k, v, callback) {
+    var chave = (k==='empresas' || k==='usuarios') ? k : (_empPrefix() + k);
+    _cache[chave] = v;
+    _persistir(callback);
+  },
+
+  loadAll: async function(callback) {
+    if (GH.isConfigured()) {
+      try {
+        var result = await GH.read();
+        if (result && result.content) {
+          _cache = result.content;
+          _currentSha = result.sha;
+        } else {
+          _carregarLocalStorage();
+          _currentSha = result ? result.sha : null;
+          try { _currentSha = await GH.write(_cache, _currentSha); } catch(e) {}
+        }
+      } catch(e) {
+        _carregarLocalStorage();
+        if (callback) callback(new Error('GitHub indisponível: ' + e.message));
+        return;
+      }
+    } else {
+      _carregarLocalStorage();
+    }
+    if (!Array.isArray(_cache['empresas'])) _cache['empresas'] = [];
+    if (!Array.isArray(_cache['usuarios'])) _cache['usuarios'] = [];
+    _garantirSuperAdmin();
+    if (callback) callback(null);
+  }
+};
+
+function _carregarLocalStorage() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) _cache = JSON.parse(raw);
+    else _cache = {};
+  } catch(e) { _cache = {}; }
+}
+
+async function _persistir(callback) {
+  if (GH.isConfigured()) {
+    try {
+      _currentSha = await GH.write(_cache, _currentSha);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_cache)); } catch(e){}
+      if (callback) callback(null);
+    } catch(e2) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_cache)); } catch(e3){}
+      toast('⚠️ Salvo localmente (GitHub indisponível).', 'info');
+      if (callback) callback(null);
+    }
+  } else {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_cache)); } catch(e) {}
+    if (callback) callback(null);
+  }
+}
+
+/* =========================================================
+   GITHUB
+   ========================================================= */
+var GH = {
+  getCfg: function() {
+    try { return JSON.parse(localStorage.getItem(GH_CFG_KEY) || 'null') || {}; } catch(e) { return {}; }
+  },
+  saveCfg: function(obj) { localStorage.setItem(GH_CFG_KEY, JSON.stringify(obj)); },
+  isConfigured: function() {
+    var c = GH.getCfg();
+    return !!(c.user && c.repo && c.branch && c.token);
+  },
+  _url: function() {
+    var c = GH.getCfg();
+    return 'https://api.github.com/repos/' + c.user + '/' + c.repo + '/contents/' + GH_FILE + '?ref=' + c.branch;
+  },
+  _headers: function() {
+    var c = GH.getCfg();
+    return { 'Authorization':'token '+c.token, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' };
+  },
+  read: async function() {
+    var resp = await fetch(GH._url(), { headers: GH._headers() });
+    if (resp.status === 404) return { content: null, sha: null };
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var data = await resp.json();
+    var rawB64 = (data.content || '').replace(/\n/g,'').trim();
+    if (!rawB64) return { content: null, sha: data.sha };
+    var json = '';
+    try { json = decodeURIComponent(escape(atob(rawB64))); } catch(e) { json = atob(rawB64); }
+    json = json.trim();
+    if (!json) return { content: null, sha: data.sha };
+    var parsed = null;
+    try { parsed = JSON.parse(json); } catch(e) { return { content: null, sha: data.sha }; }
+    return { content: parsed, sha: data.sha };
+  },
+  write: async function(data, sha) {
+    var c = GH.getCfg();
+    var json = JSON.stringify(data);
+    var b64 = btoa(unescape(encodeURIComponent(json)));
+    var body = { message: 'VicStaffo Inventário update ' + new Date().toISOString(), content: b64, branch: c.branch };
+    if (sha) body.sha = sha;
+    var url = 'https://api.github.com/repos/' + c.user + '/' + c.repo + '/contents/' + GH_FILE;
+    var resp = await fetch(url, { method:'PUT', headers: GH._headers(), body: JSON.stringify(body) });
+    if (!resp.ok) { var err = await resp.json(); throw new Error(err.message || 'HTTP '+resp.status); }
+    var result = await resp.json();
+    return result.content ? result.content.sha : sha;
+  },
+  test: async function() {
+    try {
+      var c = GH.getCfg();
+      var resp = await fetch('https://api.github.com/repos/' + c.user + '/' + c.repo, { headers: GH._headers() });
+      if (!resp.ok) return { ok: false, msg: 'Repositório não encontrado ou token inválido.' };
+      return { ok: true, msg: 'Conexão OK! Repositório encontrado.' };
+    } catch(e) { return { ok: false, msg: 'Erro de rede: ' + e.message }; }
+  }
+};
+
+/* =========================================================
+   CRIPTOGRAFIA AES-GCM 256-bit — Valor Total do Inventário
+   ========================================================= */
+var _CRYPTO_SALT = new Uint8Array([0xA1,0x3F,0xC5,0x22,0x98,0xE4,0x5D,0x9B,0x01,0xCC,0x88,0xB2,0x55,0x3E,0xFD,0x11]);
+var _cryptoKey = null;
+
+function _getDeviceSecret() {
+  var KEY_STORAGE = 'vicstaffo_device_secret_v1';
+  var secret = localStorage.getItem(KEY_STORAGE);
+  if (!secret || secret.length < 32) {
+    var arr = new Uint8Array(32);
+    crypto.getRandomValues(arr);
+    secret = Array.from(arr).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+    localStorage.setItem(KEY_STORAGE, secret);
+  }
+  return secret;
+}
+
+async function _getCryptoKey() {
+  if (_cryptoKey) return _cryptoKey;
+  var passphrase = _getDeviceSecret();
+  var enc = new TextEncoder();
+  var keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), { name:'PBKDF2' }, false, ['deriveKey']);
+  _cryptoKey = await crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt:_CRYPTO_SALT, iterations:100000, hash:'SHA-256' },
+    keyMaterial,
+    { name:'AES-GCM', length:256 },
+    false, ['encrypt','decrypt']
+  );
+  return _cryptoKey;
+}
+
+async function encryptValue(plaintext) {
+  if (plaintext === undefined || plaintext === null || plaintext === '') return '';
+  try {
+    var key = await _getCryptoKey();
+    var iv = crypto.getRandomValues(new Uint8Array(12));
+    var enc = new TextEncoder();
+    var ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv:iv }, key, enc.encode(String(plaintext)));
+    var combined = new Uint8Array(iv.length + ct.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(ct), iv.length);
+    return btoa(String.fromCharCode.apply(null, combined));
+  } catch(e) { console.error('encryptValue error', e); return String(plaintext); }
+}
+
+async function decryptValue(b64) {
+  if (!b64 || b64.length < 20) return b64;
+  try {
+    var key = await _getCryptoKey();
+    var buf = Uint8Array.from(atob(b64), function(c){ return c.charCodeAt(0); });
+    var iv = buf.slice(0,12);
+    var ct = buf.slice(12);
+    var dec = await crypto.subtle.decrypt({ name:'AES-GCM', iv:iv }, key, ct);
+    return new TextDecoder().decode(dec);
+  } catch(e) { return b64; }
+}
+
+/* =========================================================
+   USUÁRIOS & LOGIN
+   ========================================================= */
+function _getUsuarios() {
+  var lista = _cache['usuarios'];
+  if (!Array.isArray(lista)) return [];
+  return JSON.parse(JSON.stringify(lista));
+}
+function _setUsuarios(lista, cb) { DB.set('usuarios', lista, cb); }
+
+function _hashSenha(s) {
+  var h = 0;
+  for (var i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
+  return h.toString(16);
+}
+
+function _garantirSuperAdmin() {
+  if (!Array.isArray(_cache['usuarios'])) _cache['usuarios'] = [];
+  var existe = _cache['usuarios'].some(function(u){ return u.nome === 'super' && u.perfil === 'superadmin'; });
+  if (!existe) {
+    _cache['usuarios'].push({ id:'super', nome:'super', senhaHash:_hashSenha('super123'), senhaTemporaria:true, perfil:'superadmin', empresas:[], permissoes:null });
+  }
+}
+
+function _abrirTrocaSenhaObrigatoria(usuario) {
+  var existingModal = document.getElementById('modal-troca-senha');
+  if (existingModal) existingModal.remove();
+  var modal = document.createElement('div');
+  modal.id = 'modal-troca-senha';
+  modal.style.cssText = 'display:flex;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;';
+  modal.innerHTML = '<div style="background:var(--surface);border:2px solid var(--accent);border-radius:16px;padding:36px;max-width:400px;width:90%;text-align:center;">'
+    +'<div style="font-size:32px;margin-bottom:8px;">🔐</div>'
+    +'<div style="font-size:20px;font-weight:700;color:var(--accent);margin-bottom:8px;">Troca de Senha Obrigatória</div>'
+    +'<p style="font-size:13px;color:var(--text3);margin-bottom:24px;">Por segurança, troque a senha padrão antes de continuar.</p>'
+    +'<div style="text-align:left;margin-bottom:12px;">'
+    +'<label style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Nova Senha (mín. 6 caracteres)</label>'
+    +'<input type="password" id="troca-senha-nova" placeholder="••••••" style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:10px 13px;color:var(--text);font-family:inherit;font-size:14px;outline:none;width:100%;">'
+    +'</div>'
+    +'<div style="text-align:left;margin-bottom:18px;">'
+    +'<label style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:5px;">Confirmar Nova Senha</label>'
+    +'<input type="password" id="troca-senha-conf" placeholder="••••••" style="background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;padding:10px 13px;color:var(--text);font-family:inherit;font-size:14px;outline:none;width:100%;">'
+    +'</div>'
+    +'<div id="troca-senha-error" style="color:var(--danger);font-size:12px;min-height:18px;margin-bottom:12px;"></div>'
+    +'<button onclick="_confirmarTrocaSenha(\''+usuario.id+'\')" style="width:100%;padding:11px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">✓ Definir Nova Senha</button>'
+    +'</div>';
+  document.body.appendChild(modal);
+  setTimeout(function(){ var el=document.getElementById('troca-senha-nova'); if(el) el.focus(); }, 100);
+}
+
+function _confirmarTrocaSenha(userId) {
+  var nova = document.getElementById('troca-senha-nova').value;
+  var conf = document.getElementById('troca-senha-conf').value;
+  var errEl = document.getElementById('troca-senha-error');
+  if (!nova || nova.length < 6) { errEl.textContent='⚠️ A senha deve ter ao menos 6 caracteres.'; return; }
+  if (nova !== conf) { errEl.textContent='⚠️ As senhas não coincidem.'; return; }
+  if (nova === 'super123') { errEl.textContent='⚠️ Não use a senha padrão.'; return; }
+  var usuarios = _getUsuarios();
+  for (var i=0; i<usuarios.length; i++) {
+    if (usuarios[i].id === userId) { usuarios[i].senhaHash = _hashSenha(nova); delete usuarios[i].senhaTemporaria; break; }
+  }
+  _setUsuarios(usuarios, function(){
+    toast('✅ Senha alterada com sucesso!', 'success');
+    var m = document.getElementById('modal-troca-senha');
+    if(m) m.remove();
+    _cache['usuarios'] = usuarios;
+  });
+}
+
+async function fazerLogin() {
+  var user  = document.getElementById('login-user').value.trim();
+  var pass  = document.getElementById('login-pass').value;
+  var errEl = document.getElementById('login-error');
+  var btn   = document.getElementById('login-btn');
+  if (!user || !pass) { errEl.textContent='Preencha usuário e senha.'; return; }
+  errEl.textContent='';
+  btn.textContent='⏳ Verificando...';
+  btn.disabled=true;
+
+  try {
+    await DB.loadAll(function(err){});
+  } catch(e) {}
+
+  var hash = _hashSenha(pass);
+  var usuarios = _getUsuarios();
+  var u = null;
+  for (var i=0; i<usuarios.length; i++) {
+    if (usuarios[i].nome.toLowerCase() === user.toLowerCase() && usuarios[i].senhaHash === hash) { u = usuarios[i]; break; }
+  }
+
+  btn.textContent='🔑 Entrar';
+  btn.disabled=false;
+
+  if (!u) { errEl.textContent='❌ Usuário ou senha inválidos.'; return; }
+
+  /* Verifica empresas vinculadas (não superadmin) */
+  if (u.perfil !== 'superadmin') {
+    var empresas = _getEmpresas();
+    var empDisponiveis = empresas.filter(function(e){ return (u.empresas||[]).indexOf(e.id) >= 0; });
+    if (!empDisponiveis.length) {
+      var loginEmpRow = document.getElementById('login-empresa-row');
+      loginEmpRow.style.display='none';
+      _usuarioLogado = u;
+      _empresaAtiva = null;
+      _entrarSistema(u, null);
+    } else if (empDisponiveis.length === 1) {
+      _usuarioLogado = u;
+      _empresaAtiva = empDisponiveis[0];
+      _entrarSistema(u, empDisponiveis[0]);
+    } else {
+      /* Múltiplas empresas: mostra select */
+      var sel = document.getElementById('login-empresa');
+      sel.innerHTML = '';
+      empDisponiveis.forEach(function(e){ var o=document.createElement('option'); o.value=e.id; o.textContent=e.nome; sel.appendChild(o); });
+      document.getElementById('login-empresa-row').style.display='';
+      btn.textContent='➔ Selecionar Empresa';
+      btn.onclick = function() {
+        var empId = document.getElementById('login-empresa').value;
+        var emp = empDisponiveis.find(function(e){ return e.id===empId; });
+        _usuarioLogado = u;
+        _empresaAtiva = emp;
+        _entrarSistema(u, emp);
+      };
+      return;
+    }
+  } else {
+    _usuarioLogado = u;
+    _empresaAtiva = null;
+    _entrarSistema(u, null);
+  }
+}
+
+function _entrarSistema(usuario, empresa) {
+  document.getElementById('login-screen').classList.remove('open');
+  document.getElementById('main-topbar').style.display='flex';
+  document.getElementById('main-content').style.display='block';
+
+  /* User info no header */
+  document.getElementById('header-user-info').style.display='flex';
+  document.getElementById('header-username').textContent = usuario.nome;
+  var empNome = empresa ? empresa.nome : (usuario.perfil === 'superadmin' ? 'Todas as Empresas' : '—');
+  document.getElementById('header-empresa-nome').textContent = empNome ? '🏢 ' + empNome : '';
+
+  /* Superadmin: mostrar switcher de empresa */
+  if (usuario.perfil === 'superadmin') {
+    document.getElementById('nav-empresas').style.display='';
+    document.getElementById('header-empresa-switcher').style.display='flex';
+    _popularSuperSel();
+  } else {
+    document.getElementById('nav-empresas').style.display='none';
+    document.getElementById('header-empresa-switcher').style.display='none';
+  }
+
+  aplicarPermissoesNav();
+
+  /* Troca de senha obrigatória */
+  if (usuario.senhaTemporaria) {
+    setTimeout(function(){ _abrirTrocaSenhaObrigatoria(usuario); }, 500);
+  }
+
+  /* Carrega dados */
+  sincronizar();
+}
+
+function fazerLogout() {
+  _usuarioLogado = null;
+  _empresaAtiva = null;
+  _cache = {};
+  _currentSha = null;
+  if (_autoSyncInterval) clearInterval(_autoSyncInterval);
+  produtos = []; funcionarios = []; inventarios = []; currentInv = null;
+  document.getElementById('main-topbar').style.display='none';
+  document.getElementById('main-content').style.display='none';
+  document.getElementById('login-screen').classList.add('open');
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-error').textContent='';
+  document.getElementById('login-empresa-row').style.display='none';
+  var btn = document.getElementById('login-btn');
+  btn.textContent='🔑 Entrar';
+  btn.onclick = fazerLogin;
+  setTimeout(function(){ document.getElementById('login-user').focus(); }, 100);
+}
+
+function aplicarPermissoesNav() {
+  if (!_usuarioLogado) return;
+  var isSA = _usuarioLogado.perfil === 'superadmin';
+  var isAdmin = _usuarioLogado.perfil === 'admin';
+  var perms = _usuarioLogado.permissoes;
+  var modulos = { 'inventario':'nav-inventario', 'produtos':'nav-produtos', 'historico':'nav-historico', 'usuarios':'nav-usuarios' };
+  Object.keys(modulos).forEach(function(mod) {
+    var btn = document.getElementById(modulos[mod]);
+    if (!btn) return;
+    if (mod === 'inventario') { btn.style.display=''; return; }
+    if (isSA || isAdmin) { btn.style.display=''; return; }
+    if (!perms) { btn.style.display=''; return; }
+    btn.style.display = perms[mod] ? '' : 'none';
+  });
+}
+
+/* Superadmin: troca de empresa ativa */
+function _popularSuperSel() {
+  var sel = document.getElementById('super-empresa-sel');
+  if (!sel) return;
+  var empresas = _getEmpresas();
+  var cur = _empresaAtiva ? _empresaAtiva.id : '';
+  sel.innerHTML = '<option value="">— Todas —</option>';
+  empresas.forEach(function(e){
+    var o = document.createElement('option');
+    o.value=e.id; o.textContent=e.nome;
+    sel.appendChild(o);
+  });
+  sel.value = cur;
+}
+
+function superTrocarEmpresa(empId) {
+  var empresas = _getEmpresas();
+  _empresaAtiva = empId ? (empresas.find(function(e){ return e.id===empId; }) || null) : null;
+  var empNome = _empresaAtiva ? _empresaAtiva.nome : 'Todas as Empresas';
+  document.getElementById('header-empresa-nome').textContent = '🏢 ' + empNome;
+  carregarDadosApp();
+  toast('Empresa alterada para: ' + empNome, 'info');
+}
+
+/* =========================================================
+   USUÁRIOS — CRUD
+   ========================================================= */
+function onUsrPerfilChange() {
+  var perfil = document.getElementById('usr-perfil').value;
+  var empRow = document.getElementById('usr-empresa-row');
+  var permGrid = document.getElementById('perm-novo-grid').parentElement;
+  if (perfil === 'superadmin') { empRow.style.display='none'; permGrid.style.display='none'; }
+  else { empRow.style.display=''; permGrid.style.display=''; _buildEmpresaChecks(null); }
+}
+
+function _buildEmpresaChecks(selectedIds) {
+  var empresas = _getEmpresas();
+  var el = document.getElementById('usr-empresa-grid');
+  if (!el) return;
+  if (!empresas.length) { el.innerHTML='<span style="font-size:12px;color:var(--text3);">Nenhuma empresa cadastrada.</span>'; return; }
+  el.innerHTML = empresas.map(function(e){
+    var chk = (selectedIds && selectedIds.indexOf(e.id)>=0) ? 'checked' : '';
+    return '<label class="perm-item"><input type="checkbox" class="uemp-chk" value="'+e.id+'" '+chk+'> '+e.nome+'</label>';
+  }).join('');
+}
+
+function addUsuario() {
+  var nome   = document.getElementById('usr-nome').value.trim();
+  var senha  = document.getElementById('usr-senha').value;
+  var senha2 = document.getElementById('usr-senha2').value;
+  var perfil = document.getElementById('usr-perfil').value;
+  if (!nome) { toast('Informe o nome de usuário.','error'); return; }
+  if (senha.length < 4) { toast('Senha deve ter ao menos 4 caracteres.','error'); return; }
+  if (senha !== senha2) { toast('As senhas não coincidem.','error'); return; }
+  var lista = _getUsuarios();
+  for (var i=0; i<lista.length; i++) {
+    if (lista[i].nome.toLowerCase()===nome.toLowerCase()) { toast('Usuário já existe.','error'); return; }
+  }
+  var permissoes = null;
+  if (perfil !== 'superadmin' && perfil !== 'admin') {
+    var permChecks = document.querySelectorAll('#perm-novo-grid input[type=checkbox]');
+    permissoes = {};
+    for (var j=0; j<permChecks.length; j++) permissoes[permChecks[j].value] = permChecks[j].checked;
+    permissoes['inventario'] = true;
+  }
+  var empresasIds = [];
+  if (perfil !== 'superadmin') {
+    var empChks = document.querySelectorAll('.uemp-chk:checked');
+    for (var k=0; k<empChks.length; k++) empresasIds.push(empChks[k].value);
+    if (!empresasIds.length && perfil !== 'admin') { toast('Selecione ao menos uma empresa para o usuário.','error'); return; }
+  }
+  lista.push({ id:DB.uid(), nome:nome, senhaHash:_hashSenha(senha), perfil:perfil, empresas:empresasIds, permissoes:permissoes });
+  document.getElementById('usr-nome').value='';
+  document.getElementById('usr-senha').value='';
+  document.getElementById('usr-senha2').value='';
+  toast('💾 Salvando usuário...','info');
+  _setUsuarios(lista, function(){ toast('✓ Usuário cadastrado!','success'); });
+  renderUsuarios();
+}
+
+function delUsuario(id) {
+  var lista = _getUsuarios();
+  if (lista.length <= 1) { toast('Deve haver ao menos um usuário.','error'); return; }
+  var alvo = lista.find(function(u){ return u.id===id; });
+  if (_usuarioLogado && alvo && alvo.nome===_usuarioLogado.nome) { toast('Não é possível remover o usuário logado.','error'); return; }
+  if (!confirm('Remover usuário?')) return;
+  var nova = lista.filter(function(u){ return u.id!==id; });
+  toast('💾 Removendo...','info');
+  _setUsuarios(nova, function(){ toast('Usuário removido.','success'); });
+  renderUsuarios();
+}
+
+function renderUsuarios() {
+  var lista = _getUsuarios();
+  var empresas = _getEmpresas();
+  var el = document.getElementById('lista-usuarios');
+  if (!lista.length) { el.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);">🔐 Nenhum usuário</div>'; return; }
+  var modulos = [{k:'inventario',l:'📦 Inventário'},{k:'produtos',l:'🗃️ Produtos'},{k:'historico',l:'📋 Histórico'},{k:'usuarios',l:'🔐 Usuários'}];
+  var PERFIL_LABEL = { superadmin:'Super Admin', admin:'Administrador', operador:'Operador' };
+  var isSA = _usuarioLogado && _usuarioLogado.perfil === 'superadmin';
+  var h='';
+  for (var i=0; i<lista.length; i++) {
+    var u = lista[i];
+    var isMe = _usuarioLogado && u.nome===_usuarioLogado.nome;
+    var perms = u.permissoes || null;
+    var perfilBadge = u.perfil==='superadmin' ? ' <span style="background:rgba(122,74,154,.12);color:#7a1a7a;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;">SUPER</span>' : '';
+    var permHtml = '';
+    if (u.perfil==='superadmin') permHtml='<span style="font-size:12px;color:var(--text3);">Acesso total a todas as empresas</span>';
+    else if (u.perfil==='admin') permHtml='<span class="perm-badge">Acesso total</span>';
+    else if (perms) {
+      var tags='';
+      for (var m=0; m<modulos.length; m++) {
+        if (perms[modulos[m].k]) tags+='<span class="perm-badge" style="margin:2px;">'+modulos[m].l+'</span>';
+      }
+      permHtml='<div style="display:flex;flex-wrap:wrap;gap:3px;">'+tags+'</div>';
+    } else permHtml='<span class="perm-badge">Acesso total (legado)</span>';
+
+    var empNomes = '';
+    if (u.perfil !== 'superadmin') {
+      var empIds = u.empresas || [];
+      var nomes = empIds.map(function(eid){ var e=empresas.find(function(x){return x.id===eid;}); return e?e.nome:eid; });
+      empNomes = '<div style="font-size:11px;color:var(--text3);margin-top:2px;">🏢 '+(nomes.length?nomes.join(', '):'— Sem empresa')+'</div>';
+    }
+    h+='<div class="user-item" style="flex-direction:column;align-items:flex-start;gap:6px;">'
+      +'<div style="display:flex;justify-content:space-between;width:100%;align-items:center;">'
+      +'<div><div style="font-weight:700;color:var(--text);">'+u.nome+perfilBadge+(isMe?' <span style="font-size:10px;color:var(--accent);">(você)</span>':'')+'</div>'
+      +'<div style="font-size:12px;color:var(--text3);">'+(PERFIL_LABEL[u.perfil]||u.perfil)+'</div>'
+      +empNomes+'</div>'
+      +(isMe ? '<span style="font-size:12px;color:var(--text3);">—</span>'
+        : '<div style="display:flex;gap:6px;">'
+        +(u.perfil!=='superadmin'?'<button class="btn btn-sm" onclick="editarPermissoes(\''+u.id+'\')">✏️ Permissões</button>':'')
+        +'<button class="btn btn-sm btn-danger" onclick="delUsuario(\''+u.id+'\')">✕ Remover</button>'
+        +'</div>')
+      +'</div>'
+      +'<div style="margin-top:4px;">'+permHtml+'</div>'
+      +'</div>';
+  }
+  el.innerHTML=h;
+  var optSuper = document.getElementById('usr-opt-super');
+  if (optSuper) optSuper.style.display = isSA ? '' : 'none';
+  _buildEmpresaChecks(null);
+}
+
+function editarPermissoes(id) {
+  var lista = _getUsuarios();
+  var u = lista.find(function(x){ return x.id===id; });
+  if (!u) return;
+  var empresas = _getEmpresas();
+  var modulos = [{k:'inventario',l:'📦 Inventário'},{k:'produtos',l:'🗃️ Produtos'},{k:'historico',l:'📋 Histórico'},{k:'usuarios',l:'🔐 Usuários'}];
+  var perms = u.permissoes || {};
+  var checksHtml = modulos.map(function(mod){
+    var disabled = mod.k==='inventario' ? ' disabled' : '';
+    var checked  = (mod.k==='inventario' || perms[mod.k]) ? ' checked' : '';
+    return '<label class="perm-item"><input type="checkbox" class="ep-check" data-mod="'+mod.k+'"'+checked+disabled+'> '+mod.l+'</label>';
+  }).join('');
+  var empIds = u.empresas || [];
+  var empChecks = empresas.map(function(e){
+    var c = empIds.indexOf(e.id)>=0 ? ' checked' : '';
+    return '<label class="perm-item"><input type="checkbox" class="ep-emp" value="'+e.id+'"'+c+'> '+e.nome+'</label>';
+  }).join('');
+
+  var overlay = document.getElementById('modal-edit-perm');
+  if (!overlay) { overlay=document.createElement('div'); overlay.id='modal-edit-perm'; overlay.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:2100;align-items:center;justify-content:center;'; document.body.appendChild(overlay); }
+  overlay.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:500px;width:94%;max-height:90vh;overflow-y:auto;">'
+    +'<h3 style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;">✏️ Permissões de Acesso</h3>'
+    +'<p style="font-size:13px;color:var(--text3);margin-bottom:16px;">Usuário: <strong style="color:var(--accent);">'+u.nome+'</strong></p>'
+    +(empresas.length?('<div style="margin-bottom:16px;"><div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Empresas com Acesso</div><div class="perm-grid">'+empChecks+'</div></div>'):'')
+    +'<div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Módulos Permitidos</div>'
+    +'<div class="perm-grid">'+checksHtml+'</div>'
+    +'<p style="font-size:11px;color:var(--text3);margin-top:10px;">* Inventário sempre liberado.</p>'
+    +'<div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end;">'
+    +'<button class="btn" onclick="document.getElementById(\'modal-edit-perm\').style.display=\'none\'">Cancelar</button>'
+    +'<button class="btn btn-primary" onclick="salvarPermissoes(\''+id+'\')">✓ Salvar</button>'
+    +'</div></div>';
+  overlay.style.display='flex';
+}
+
+function salvarPermissoes(id) {
+  var lista = _getUsuarios();
+  var u = lista.find(function(x){ return x.id===id; });
+  if (!u) return;
+  var checks = document.querySelectorAll('#modal-edit-perm .ep-check');
+  var permissoes = {};
+  for (var i=0; i<checks.length; i++) permissoes[checks[i].getAttribute('data-mod')] = checks[i].checked;
+  permissoes['inventario'] = true;
+  u.permissoes = permissoes;
+  var empChks = document.querySelectorAll('#modal-edit-perm .ep-emp:checked');
+  u.empresas = [];
+  for (var j=0; j<empChks.length; j++) u.empresas.push(empChks[j].value);
+  document.getElementById('modal-edit-perm').style.display='none';
+  toast('💾 Salvando permissões...','info');
+  _setUsuarios(lista, function(){ toast('✓ Permissões atualizadas!','success'); });
+  renderUsuarios();
+  if (_usuarioLogado && _usuarioLogado.id===id) { _usuarioLogado.permissoes=permissoes; aplicarPermissoesNav(); }
+}
+
+/* =========================================================
+   EMPRESAS — CRUD (apenas superadmin)
+   ========================================================= */
+function addEmpresa() {
+  var nome = document.getElementById('emp-nome').value.trim();
+  var end  = document.getElementById('emp-end').value.trim();
+  if (!nome) { toast('Informe o nome da empresa.','error'); return; }
+  var lista = _getEmpresas();
+  lista.push({ id:Date.now().toString(36), nome:nome, end:end });
+  document.getElementById('emp-nome').value='';
+  document.getElementById('emp-end').value='';
+  _setEmpresas(lista, function(){ toast('✓ Empresa adicionada!','success'); });
+  renderEmpresas();
+  _popularSuperSel();
+  _buildEmpresaChecks(null);
+}
+
+function delEmpresa(id) {
+  var lista = _getEmpresas();
+  var emp = lista.find(function(e){ return e.id===id; });
+  if (!emp) return;
+  if (!confirm('Remover "'+emp.nome+'"?')) return;
+  lista = lista.filter(function(e){ return e.id!==id; });
+  var usuarios = _getUsuarios();
+  usuarios = usuarios.map(function(u){ u.empresas=(u.empresas||[]).filter(function(eid){return eid!==id;}); return u; });
+  _cache['usuarios'] = usuarios;
+  _setEmpresas(lista, function(){ toast('Empresa removida.','success'); });
+  renderEmpresas();
+  _popularSuperSel();
+  _buildEmpresaChecks(null);
+}
+
+function renderEmpresas() {
+  var lista = _getEmpresas();
+  var usuarios = _getUsuarios();
+  var el = document.getElementById('lista-empresas');
+  if (!el) return;
+  if (!lista.length) { el.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3);">🏢 Nenhuma empresa</div>'; return; }
+  var h='';
+  for (var i=0; i<lista.length; i++) {
+    var e=lista[i];
+    var numU = usuarios.filter(function(u){ return (u.empresas||[]).indexOf(e.id)>=0; }).length;
+    h+='<div class="user-item">'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="font-weight:700;color:var(--text);">🏢 '+e.nome+'</div>'
+      +'<div style="font-size:12px;color:var(--text3);">'+numU+' usuário(s) vinculado(s)'+(e.end?' · 📍 '+e.end:'')+'</div>'
+      +'</div>'
+      +'<button class="btn btn-sm btn-danger" onclick="delEmpresa(\''+e.id+'\')">✕ Remover</button>'
+      +'</div>';
+  }
+  el.innerHTML=h;
+}
+
+/* =========================================================
+   GITHUB CONFIG MODAL
+   ========================================================= */
+function abrirGHConfig() {
+  var c = GH.getCfg();
+  document.getElementById('gh-user').value   = c.user   || '';
+  document.getElementById('gh-repo').value   = c.repo   || '';
+  document.getElementById('gh-branch').value = c.branch || 'main';
+  document.getElementById('gh-token').value  = c.token  || '';
+  document.getElementById('gh-test-status').textContent = '';
+  document.getElementById('modal-ghcfg').style.display='flex';
+}
+function fecharGHConfig() { document.getElementById('modal-ghcfg').style.display='none'; }
+
+async function salvarGHConfig() {
+  var user   = document.getElementById('gh-user').value.trim();
+  var repo   = document.getElementById('gh-repo').value.trim();
+  var branch = document.getElementById('gh-branch').value.trim() || 'main';
+  var token  = document.getElementById('gh-token').value.trim();
+  var statusEl = document.getElementById('gh-test-status');
+  if (!user || !repo || !token) { statusEl.textContent='⚠️ Preencha todos os campos.'; statusEl.style.color='var(--danger)'; return; }
+  GH.saveCfg({ user, repo, branch, token });
+  statusEl.textContent='⏳ Testando conexão...';
+  statusEl.style.color='var(--amber)';
+  var result = await GH.test();
+  if (!result.ok) { statusEl.textContent='❌ '+result.msg; statusEl.style.color='var(--danger)'; return; }
+  statusEl.textContent='✅ '+result.msg;
+  statusEl.style.color='var(--green)';
+  setTimeout(function(){ fecharGHConfig(); sincronizar(); }, 1200);
+}
+
+function limparGHConfig() {
+  if (!confirm('Desconectar do GitHub? Os dados locais não serão apagados.')) return;
+  localStorage.removeItem(GH_CFG_KEY);
+  _currentSha=null;
+  fecharGHConfig();
+  setStatus('⚠️ Sem GitHub', 'var(--danger)');
+  toast('GitHub desconectado. Usando armazenamento local.','error');
+}
+
+/* =========================================================
+   SINCRONIZAÇÃO / STATUS
+   ========================================================= */
+function setStatus(txt, cor) {
+  var el = document.getElementById('gh-status');
+  el.textContent=txt;
+  el.style.color=cor||'var(--green)';
+}
+
+async function sincronizar() {
+  if (!GH.isConfigured()) {
+    setStatus('⚠️ Configure o GitHub', 'var(--danger)');
+    _carregarLocalStorage();
+    if (!Array.isArray(_cache['empresas'])) _cache['empresas']=[];
+    if (!Array.isArray(_cache['usuarios'])) _cache['usuarios']=[];
+    _garantirSuperAdmin();
+    carregarDadosApp();
+    if (_usuarioLogado && _usuarioLogado.perfil==='superadmin') _popularSuperSel();
+    return;
+  }
+  setStatus('⏳ Sincronizando...', 'var(--amber)');
+  await DB.loadAll(function(err){
+    if (err) { setStatus('❌ Erro: '+err.message, 'var(--danger)'); }
+    else {
+      var now = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+      setStatus('✅ Sincronizado '+now, 'var(--green)');
+      _ultimoHash = _hashCache();
+      iniciarAutoSync();
+    }
+    carregarDadosApp();
+    if (_usuarioLogado && _usuarioLogado.perfil==='superadmin') _popularSuperSel();
+  });
+}
+
+function _hashCache() {
+  return JSON.stringify(_cache).length + '_' + ((_cache[_empPrefix()+'inventarios']||[]).length);
+}
+
+async function _autoSync() {
+  if (!GH.isConfigured()) return;
+  var ativo = document.activeElement;
+  if (ativo && (ativo.tagName==='INPUT'||ativo.tagName==='SELECT'||ativo.tagName==='TEXTAREA')) return;
+  try {
+    var result = await GH.read();
+    if (!result || !result.content) return;
+    var hashRemoto = JSON.stringify(result.content).length+'_'+((result.content[_empPrefix()+'inventarios']||[]).length);
+    if (hashRemoto===_ultimoHash) return;
+    _cache=result.content;
+    _currentSha=result.sha;
+    _ultimoHash=hashRemoto;
+    carregarDadosApp();
+    var now = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+    setStatus('✅ Sincronizado '+now, 'var(--green)');
+  } catch(e) { console.warn('Auto-sync falhou:', e.message); }
+}
+
+function iniciarAutoSync() {
+  if (_autoSyncInterval) clearInterval(_autoSyncInterval);
+  if (!GH.isConfigured()) return;
+  _ultimoHash = _hashCache();
+  _autoSyncInterval = setInterval(_autoSync, 30000);
+}
+
+/* =========================================================
+   CARREGAR DADOS DA EMPRESA ATIVA
+   ========================================================= */
+function carregarDadosApp() {
+  /* Produtos */
+  var prodRaw = DB.get('produtos');
+  produtos = Array.isArray(prodRaw) ? prodRaw : defaultProducts();
+  if (!Array.isArray(prodRaw) || !prodRaw.length) {
+    produtos = defaultProducts();
+    DB.set('produtos', produtos);
+  }
+
+  /* Funcionários */
+  var funcRaw = DB.get('funcionarios');
+  funcionarios = Array.isArray(funcRaw) ? funcRaw : ['Ana Lima','Carlos Souza','Maria Oliveira','Pedro Santos','Fernanda Costa'];
+
+  /* Inventários */
+  var invRaw = DB.get('inventarios');
+  inventarios = Array.isArray(invRaw) ? invRaw : [];
+
+  /* Inventário corrente */
+  var curRaw = DB.get('currentInv');
+  if (curRaw && typeof curRaw === 'object' && !Array.isArray(curRaw)) {
+    currentInv = curRaw;
+  } else {
+    currentInv = { mes:'', ano:new Date().getFullYear(), responsavel:'', data:new Date().toISOString().split('T')[0], itens:{}, fechado:false };
+  }
+
+  /* Restaura UI do inventário */
+  document.getElementById('inv-mes').value = currentInv.mes || '';
+  document.getElementById('inv-ano').value = currentInv.ano || new Date().getFullYear();
+  document.getElementById('inv-responsavel').value = '';
+  document.getElementById('inv-data').value = currentInv.data || new Date().toISOString().split('T')[0];
+  if (currentInv.fechado) {
+    document.getElementById('inv-status-badge').className='status-saved';
+    document.getElementById('inv-status-badge').textContent='✓ Fechado';
+  } else {
+    document.getElementById('inv-status-badge').className='status-open';
+    document.getElementById('inv-status-badge').textContent='● Em aberto';
+  }
+
+  /* Permissão: oculta botões de salvar/fechar para operadores sem permissão de inventário edição */
+  var isReadOnly = false;
+  if (_usuarioLogado) {
+    var isSA = _usuarioLogado.perfil==='superadmin';
+    var isAdmin = _usuarioLogado.perfil==='admin';
+    if (!isSA && !isAdmin && _usuarioLogado.permissoes) {
+      /* Operadores podem sempre ver o inventário; edição é controlada pelo fechado */
+    }
+  }
+
+  populateSelect();
+  renderInvTable();
+  renderProdTable();
+  renderFuncionarios();
+  renderHistorico();
+  updateMetrics();
+  renderUsuarios();
+  renderEmpresas();
+}
+
+/* =========================================================
+   NAVEGAÇÃO DE ABAS
+   ========================================================= */
+function goTab(name, el) {
+  /* Verificar permissão */
+  if (_usuarioLogado && name !== 'inventario') {
+    var isSA = _usuarioLogado.perfil==='superadmin';
+    var isAdmin = _usuarioLogado.perfil==='admin';
+    if (!isSA && !isAdmin) {
+      var perms = _usuarioLogado.permissoes;
+      if (perms && !perms[name]) {
+        toast('⛔ Você não tem permissão para acessar este módulo.','error');
+        return;
+      }
+    }
+    if (name==='empresas' && !isSA) { toast('⛔ Acesso restrito ao Super Administrador.','error'); return; }
+  }
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('sec-'+name).classList.add('active');
+  if (el) el.classList.add('active');
+  if (name==='historico') renderHistorico();
+  if (name==='produtos') renderProdTable();
+  if (name==='usuarios') { renderUsuarios(); _buildEmpresaChecks(null); }
+  if (name==='empresas') renderEmpresas();
+}
+
+/* =========================================================
+   INVENTÁRIO
+   ========================================================= */
+var invFilter = '';
+function renderInvTable() {
+  invFilter = document.getElementById('search-inv').value.toLowerCase();
+  var tbody = document.getElementById('inv-tbody');
+  tbody.innerHTML='';
+  var visible = produtos.filter(function(p){
+    if (filterMode==='nonzero') { var q=currentInv.itens[p.cod]||0; if (q==0) return false; }
+    if (invFilter) return p.item.toLowerCase().includes(invFilter) || String(p.cod).includes(invFilter);
+    return true;
+  });
+  visible.forEach(function(p){
+    var qty = currentInv.itens[p.cod] !== undefined ? currentInv.itens[p.cod] : '';
+    var subtotal = (parseFloat(qty)||0) * parseFloat(p.valor||0);
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--text3)">'+p.cod+'</td>'
+      +'<td>'+p.item+'</td>'
+      +'<td class="td-center"><span class="badge badge-amber">'+p.unidade+'</span></td>'
+      +'<td class="td-num">'+fmtMoney(p.valor)+'</td>'
+      +'<td class="td-center"><input type="number" class="qty-input" min="0" step="0.001" value="'+qty+'" data-cod="'+p.cod+'" onchange="updateQty(this)" '+(currentInv.fechado?'disabled':'')+'></td>'
+      +'<td class="td-num" id="sub-'+p.cod+'">'+(subtotal>0?fmtMoney(subtotal):'<span style="color:var(--text3)">—</span>')+'</td>';
+    tbody.appendChild(tr);
+  });
+  updateMetrics();
+}
+
+function updateQty(input) {
+  var cod = input.dataset.cod;
+  var val = parseFloat(input.value) || 0;
+  currentInv.itens[cod] = val;
+  var p = produtos.find(function(x){ return x.cod===cod; });
+  var sub = val * parseFloat(p?p.valor:0);
+  var cell = document.getElementById('sub-'+cod);
+  if (cell) cell.innerHTML = sub>0 ? fmtMoney(sub) : '<span style="color:var(--text3)">—</span>';
+  updateMetrics();
+  /* Salva currentInv sem criptografar (autosave) */
+  DB.set('currentInv', currentInv);
+}
+
+function updateMetrics() {
+  if (!currentInv) return;
+  var total = calcTotalAtual();
+  var contados = produtos.filter(function(p){ return (currentInv.itens[p.cod]||0)>0; }).length;
+  var zerados  = produtos.filter(function(p){ return !(currentInv.itens[p.cod]||0); }).length;
+  document.getElementById('m-total-itens').textContent = produtos.length;
+  document.getElementById('m-contados').textContent = contados;
+  document.getElementById('m-zerados').textContent = zerados;
+  document.getElementById('m-valor-total').textContent = fmtMoney(total);
+  document.getElementById('tfoot-total').textContent = fmtMoney(total);
+}
+
+function calcTotalAtual() {
+  return produtos.reduce(function(s,p){ return s+((currentInv.itens[p.cod]||0)*parseFloat(p.valor||0)); }, 0);
+}
+
+function calcTotal(inv) {
+  return produtos.reduce(function(s,p){ return s+((inv.itens[p.cod]||0)*parseFloat(p.valor||0)); }, 0);
+}
+
+function filterZerados() { filterMode='nonzero'; renderInvTable(); }
+function clearFilter() { filterMode='all'; renderInvTable(); }
+
+function populateSelect() {
+  var sel = document.getElementById('inv-responsavel');
+  var cur = currentInv && currentInv.responsavel ? currentInv.responsavel : '';
+  sel.innerHTML = '<option value="">Selecione...</option>';
+  funcionarios.forEach(function(f){
+    var o = document.createElement('option');
+    o.value=f; o.textContent=f;
+    sel.appendChild(o);
+  });
+  sel.value = cur;
+}
+
+async function salvarInventario() {
+  currentInv.mes         = document.getElementById('inv-mes').value;
+  currentInv.ano         = document.getElementById('inv-ano').value;
+  currentInv.responsavel = document.getElementById('inv-responsavel').value;
+  currentInv.data        = document.getElementById('inv-data').value;
+
+  /* Criptografa o valor total antes de persistir */
+  var total = calcTotalAtual();
+  currentInv.valorTotalEnc = await encryptValue(total.toFixed(2));
+  /* Mantém o total em claro apenas na memória (não persiste em claro) */
+
+  DB.set('currentInv', currentInv, function(){ toast('Inventário salvo!', 'success'); });
+}
+
+function fecharInventario() {
+  currentInv.mes         = document.getElementById('inv-mes').value;
+  currentInv.ano         = document.getElementById('inv-ano').value;
+  currentInv.responsavel = document.getElementById('inv-responsavel').value;
+  currentInv.data        = document.getElementById('inv-data').value;
+  if (!currentInv.mes) { toast('Selecione o mês antes de fechar.','error'); return; }
+  if (!currentInv.responsavel) { toast('Selecione o responsável antes de fechar.','error'); return; }
+  document.getElementById('print-content').innerHTML = buildPrintHTML(currentInv, true);
+  document.getElementById('modal-print').classList.add('open');
+}
+
+async function confirmarFechamento() {
+  currentInv.fechado = true;
+  currentInv.id      = Date.now();
+  currentInv.savedAt = new Date().toISOString();
+
+  /* Criptografa o valor total do inventário fechado */
+  var total = calcTotal(currentInv);
+  currentInv.valorTotalEnc = await encryptValue(total.toFixed(2));
+
+  inventarios.push(JSON.parse(JSON.stringify(currentInv)));
+  DB.set('inventarios', inventarios, function(){ toast('✓ Inventário arquivado!','success'); });
+
+  /* Reset */
+  currentInv = { mes:'', ano:new Date().getFullYear(), responsavel:'', data:new Date().toISOString().split('T')[0], itens:{}, fechado:false };
+  DB.set('currentInv', currentInv);
+  closeModal('modal-print');
+
+  document.getElementById('inv-mes').value='';
+  document.getElementById('inv-responsavel').value='';
+  document.getElementById('inv-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('inv-status-badge').className='status-open';
+  document.getElementById('inv-status-badge').textContent='● Em aberto';
+
+  renderInvTable();
+  renderHistorico();
+}
+
+function imprimirInventario() {
+  printHTML(buildPrintHTML(currentInv, false));
+}
+
+/* =========================================================
+   PRODUTOS
+   ========================================================= */
+function renderProdTable() {
+  var q = document.getElementById('search-prod').value.toLowerCase();
+  var tbody = document.getElementById('prod-tbody');
+  tbody.innerHTML='';
+  var filtered = produtos.filter(function(p){ return !q || p.item.toLowerCase().includes(q) || String(p.cod).includes(q); });
+  document.getElementById('prod-count').textContent = filtered.length+' produtos';
+  filtered.forEach(function(p){
+    var tr = document.createElement('tr');
+    tr.innerHTML='<td style="font-family:\'JetBrains Mono\',monospace;font-size:12px;color:var(--text3)">'+p.cod+'</td>'
+      +'<td>'+p.item+'</td>'
+      +'<td class="td-center"><span class="badge badge-amber">'+p.unidade+'</span></td>'
+      +'<td class="td-num">'+fmtMoney(p.valor)+'</td>'
+      +'<td class="td-center">'
+      +'<button class="btn btn-sm" onclick="editarProduto(\''+p.cod+'\')">✏️</button> '
+      +'<button class="btn btn-sm btn-danger" onclick="excluirProduto(\''+p.cod+'\')">🗑</button>'
+      +'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function salvarProduto() {
+  var cod     = document.getElementById('p-cod').value.trim();
+  var item    = document.getElementById('p-item').value.trim();
+  var unidade = document.getElementById('p-unidade').value;
+  var valor   = parseFloat(document.getElementById('p-valor').value) || 0;
+  if (!cod || !item) { toast('Preencha o código e o nome do produto.','error'); return; }
+  if (editingProd) {
+    var idx = produtos.findIndex(function(p){ return p.cod===editingProd; });
+    if (idx>=0) { produtos[idx]={cod,item,unidade,valor}; toast('Produto atualizado!','success'); }
+    editingProd=null;
+    document.getElementById('prod-form-title').textContent='Novo Produto';
+  } else {
+    if (produtos.find(function(p){ return p.cod===cod; })) { toast('Código já cadastrado.','error'); return; }
+    produtos.push({cod,item,unidade,valor});
+    toast('Produto cadastrado!','success');
+  }
+  DB.set('produtos', produtos);
+  resetProdForm();
+  renderProdTable();
+}
+
+function editarProduto(cod) {
+  var p = produtos.find(function(x){ return x.cod===cod; });
+  if (!p) return;
+  editingProd=cod;
+  document.getElementById('p-cod').value=p.cod;
+  document.getElementById('p-item').value=p.item;
+  document.getElementById('p-unidade').value=p.unidade;
+  document.getElementById('p-valor').value=p.valor;
+  document.getElementById('prod-form-title').textContent='Editar Produto';
+  document.getElementById('p-cod').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function excluirProduto(cod) {
+  if (!confirm('Excluir este produto?')) return;
+  produtos=produtos.filter(function(p){ return p.cod!==cod; });
+  DB.set('produtos', produtos);
+  renderProdTable();
+  renderInvTable();
+  toast('Produto removido.','success');
+}
+
+function resetProdForm() {
+  editingProd=null;
+  document.getElementById('p-cod').value='';
+  document.getElementById('p-item').value='';
+  document.getElementById('p-unidade').value='UN';
+  document.getElementById('p-valor').value='';
+  document.getElementById('prod-form-title').textContent='Novo Produto';
+}
+
+/* =========================================================
+   FUNCIONÁRIOS
+   ========================================================= */
+function renderFuncionarios() {
+  var list = document.getElementById('func-list');
+  list.innerHTML='';
+  funcionarios.forEach(function(f, i){
+    var span = document.createElement('span');
+    span.style.cssText='display:inline-flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:12px;';
+    span.innerHTML=f+' <button onclick="removeFuncionario('+i+')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0;line-height:1;">×</button>';
+    list.appendChild(span);
+  });
+  populateSelect();
+}
+
+function adicionarFuncionario() {
+  var nome = document.getElementById('func-nome').value.trim();
+  if (!nome) return;
+  if (funcionarios.includes(nome)) { toast('Funcionário já cadastrado.','error'); return; }
+  funcionarios.push(nome);
+  DB.set('funcionarios', funcionarios);
+  document.getElementById('func-nome').value='';
+  renderFuncionarios();
+  toast('Funcionário adicionado!','success');
+}
+
+function removeFuncionario(idx) {
+  funcionarios.splice(idx,1);
+  DB.set('funcionarios', funcionarios);
+  renderFuncionarios();
+}
+
+/* =========================================================
+   HISTÓRICO
+   ========================================================= */
+async function renderHistorico() {
+  var list = document.getElementById('hist-list');
+  document.getElementById('hist-count').textContent = inventarios.length+' registros';
+  if (!inventarios.length) { list.innerHTML='<div style="padding:24px;text-align:center;color:var(--text3)">Nenhum inventário arquivado.</div>'; return; }
+  list.innerHTML='';
+  var sorted = [...inventarios].reverse();
+  for (var i=0; i<sorted.length; i++) {
+    var inv = sorted[i];
+    /* Tenta descriptografar valor total */
+    var totalStr = '';
+    if (inv.valorTotalEnc) {
+      try {
+        var dec = await decryptValue(inv.valorTotalEnc);
+        totalStr = fmtMoney(parseFloat(dec)||0);
+      } catch(e) { totalStr = fmtMoney(calcTotal(inv)); }
+    } else {
+      totalStr = fmtMoney(calcTotal(inv));
+    }
+    var div = document.createElement('div');
+    div.className='hist-item';
+    div.innerHTML='<div>'
+      +'<div style="font-weight:600;font-size:14px">'+inv.mes+' / '+inv.ano+'</div>'
+      +'<div class="hist-meta">Responsável: '+(inv.responsavel||'—')+' · Data: '+fmtDate(inv.data)+' · '+Object.values(inv.itens||{}).filter(function(v){return v>0;}).length+' itens contados</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px;">'
+      +'<div style="text-align:right">'
+      +'<div style="font-size:11px;color:var(--text3)">Valor Total 🔐</div>'
+      +'<div style="font-weight:600;font-family:\'JetBrains Mono\',monospace;color:var(--accent)">'+totalStr+'</div>'
+      +'</div>'
+      +'<button class="btn btn-sm" onclick="verInventario('+inv.id+')">Ver</button>'
+      +'<button class="btn btn-sm btn-success" onclick="printHistItem('+inv.id+')">🖨️</button>'
+      +'<button class="btn btn-sm btn-danger" onclick="excluirHist('+inv.id+')">🗑</button>'
+      +'</div>';
+    list.appendChild(div);
+  }
+}
+
+function verInventario(id) {
+  var inv = inventarios.find(function(x){ return x.id===id; });
+  if (!inv) return;
+  printHistId=id;
+  document.getElementById('modal-hist-title').textContent='Inventário '+inv.mes+'/'+inv.ano;
+  document.getElementById('modal-hist-content').innerHTML=buildPrintHTML(inv,true);
+  document.getElementById('modal-hist').classList.add('open');
+}
+
+function printHistItem(id) {
+  var inv = inventarios.find(function(x){ return x.id===id; });
+  if (!inv) return;
+  printHTML(buildPrintHTML(inv,false));
+}
+
+function imprimirHist() { if (printHistId) printHistItem(printHistId); }
+
+function excluirHist(id) {
+  if (!confirm('Excluir este inventário do histórico?')) return;
+  inventarios=inventarios.filter(function(x){ return x.id!==id; });
+  DB.set('inventarios', inventarios);
+  renderHistorico();
+  toast('Inventário excluído.','success');
+}
+
+/* =========================================================
+   IMPRESSÃO
+   ========================================================= */
+function buildPrintHTML(inv, preview) {
+  var total = calcTotal(inv);
+  var itensComQtd = produtos.filter(function(p){ return (inv.itens[p.cod]||0)>0; });
+  var itens = itensComQtd.length>0 ? itensComQtd : produtos;
+  var rows='';
+  itens.forEach(function(p){
+    var qty=inv.itens[p.cod]||0;
+    var sub=qty*parseFloat(p.valor||0);
+    rows+='<tr>'
+      +'<td>'+p.cod+'</td><td>'+p.item+'</td>'
+      +'<td style="text-align:center">'+p.unidade+'</td>'
+      +'<td style="text-align:right">'+fmtMoney(p.valor)+'</td>'
+      +'<td style="text-align:center">'+(qty>0?qty:'—')+'</td>'
+      +'<td style="text-align:right">'+(sub>0?fmtMoney(sub):'—')+'</td>'
+      +'</tr>';
+  });
+  var style=preview?'max-height:400px;overflow-y:auto;':'';
+  return '<div style="'+style+'">'
+    +'<div style="font-family:\'Plus Jakarta Sans\',Arial,sans-serif;background:#fff;padding:'+(preview?'0':'20px')+';color:#000;">'
+    +'<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">'
+    +'<div>'
+    +'<div style="font-size:20px;font-weight:800;color:#E05A1C;">VicStaffo</div>'
+    +'<div style="font-size:14px;font-weight:600;margin-top:2px;">Apuração do Inventário</div>'
+    +'</div>'
+    +'<div style="text-align:right;font-size:11px;color:#666;">'
+    +'<div>Mês: <strong>'+(inv.mes||'—')+' / '+inv.ano+'</strong></div>'
+    +'<div>Responsável: <strong>'+(inv.responsavel||'—')+'</strong></div>'
+    +'<div>Data: <strong>'+fmtDate(inv.data)+'</strong></div>'
+    +'<div>Gerado em: '+new Date().toLocaleString('pt-BR')+'</div>'
+    +'</div></div>'
+    +'<hr style="border:none;border-top:2px solid #E05A1C;margin-bottom:12px;">'
+    +'<table style="width:100%;border-collapse:collapse;font-size:11px;">'
+    +'<thead><tr style="background:#FFF3ED;">'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:left;">Cód.</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:left;">Item</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:center;">Unid.</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:right;">Vl. Compra</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:center;">Qtd.</th>'
+    +'<th style="border:1px solid #ddd;padding:5px 7px;text-align:right;">Vl. Total</th>'
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'<tfoot><tr style="background:#FFF3ED;font-weight:700;">'
+    +'<td colspan="5" style="border:1px solid #ddd;padding:6px 7px;text-align:right;font-size:12px;">VALOR TOTAL DO INVENTÁRIO (R$)</td>'
+    +'<td style="border:1px solid #ddd;padding:6px 7px;text-align:right;font-size:13px;color:#E05A1C;">'+fmtMoney(total)+'</td>'
+    +'</tr></tfoot>'
+    +'</table>'
+    +'<div style="margin-top:32px;display:flex;gap:40px;">'
+    +'<div style="flex:1;text-align:center;border-top:1px solid #999;padding-top:6px;font-size:11px;">Responsável pelo Inventário</div>'
+    +'<div style="flex:1;text-align:center;border-top:1px solid #999;padding-top:6px;font-size:11px;">Conferência</div>'
+    +'</div></div></div>';
+}
+
+function printHTML(html) {
+  var w = window.open('','_blank','width=900,height=700');
+  w.document.write('<!DOCTYPE html><html><head><title>Inventário VicStaffo</title>'
+    +'<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">'
+    +'<style>body{margin:0;padding:20px;background:#fff;font-family:\'Plus Jakarta Sans\',sans-serif;} @media print{body{padding:0;}}</style>'
+    +'</head><body>'+html+'<script>setTimeout(()=>window.print(),500)<\/script></body></html>');
+  w.document.close();
+}
+
+/* =========================================================
+   UTILS
+   ========================================================= */
+function fmtMoney(v) { return 'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:4}); }
+function fmtDate(d) { if(!d) return '—'; try { return new Date(d+'T12:00:00').toLocaleDateString('pt-BR'); } catch(e){ return d; } }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function toast(msg, type) {
+  var c = document.getElementById('toasts');
+  var t = document.createElement('div');
+  t.className='toast '+(type||'');
+  t.textContent=msg;
+  c.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 3200);
+}
+
+/* =========================================================
+   PRODUTOS PADRÃO
+   ========================================================= */
+function defaultProducts() {
+  return [
+    {cod:'1',item:'ABOBRINHA ITALIANA',unidade:'KG',valor:1.12},
+    {cod:'141',item:'AGUA C/ GAS',unidade:'UN',valor:6},
+    {cod:'142',item:'AGUA COPO',unidade:'UN',valor:0},
+    {cod:'144',item:'AGUA S/ GAS',unidade:'UN',valor:21},
+    {cod:'467',item:'AGUA SANITARIA',unidade:'UN',valor:0},
+    {cod:'465',item:'ALCOOL 70',unidade:'UN',valor:0},
+    {cod:'2403',item:'ALCOOL GEL',unidade:'UN',valor:0},
+    {cod:'4',item:'ALFACE CRESPA',unidade:'KG',valor:1.464},
+    {cod:'2523',item:'ALHO PASTA',unidade:'KG',valor:0.8936},
+    {cod:'2501',item:'ANCHO 220G',unidade:'UN',valor:8},
+    {cod:'2870',item:'ANCHO SUINO 220GR',unidade:'UN',valor:4},
+    {cod:'31',item:'ARROZ AGULHINHA T1',unidade:'KG',valor:18.1939},
+    {cod:'2900',item:'AVENTAL VINIL',unidade:'UN',valor:0},
+    {cod:'71',item:'AZEITE DE OLIVA',unidade:'LT',valor:0.56},
+    {cod:'82',item:'BACON FATIADO',unidade:'KG',valor:0.512},
+    {cod:'2580',item:'BATATA BEM BRASIL (FRITAS VICSTAFFO)',unidade:'KG',valor:33.08},
+    {cod:'2718',item:'BATATA PALHA',unidade:'KG',valor:0},
+    {cod:'7',item:'BERINJELA',unidade:'KG',valor:1.12},
+    {cod:'2932',item:'BIFE DO VAZIO',unidade:'UN',valor:2},
+    {cod:'2912',item:'BLADE BEEF',unidade:'UN',valor:8},
+    {cod:'2797',item:'BOBINA PICOTADA 18X30',unidade:'UN',valor:0},
+    {cod:'2374',item:'BOBINA PICOTADA 25X35',unidade:'UN',valor:0},
+    {cod:'2375',item:'BOBINA PICOTADA 30X40',unidade:'UN',valor:0},
+    {cod:'2799',item:'BOBINA PICOTADA 35x45',unidade:'UN',valor:0},
+    {cod:'2376',item:'BOBINA PICOTADA 40X58',unidade:'UN',valor:0},
+    {cod:'461',item:'BOBINA PLASTICA PICOTADA',unidade:'UN',valor:0},
+    {cod:'2614',item:'BOBINA TERMICA VICSTAFFO',unidade:'UN',valor:0},
+    {cod:'2643',item:'BOMBA DOSADORA UN',unidade:'UN',valor:0},
+    {cod:'226',item:'BRAHMA DUPLO MALTE LATA',unidade:'UN',valor:0},
+    {cod:'507',item:'BRAHMA LATA',unidade:'UN',valor:0},
+    {cod:'8',item:'BROCOLIS CONGELADO',unidade:'KG',valor:2.626},
+    {cod:'2304',item:'BUDWEISER LATA 350 ML',unidade:'UN',valor:0},
+    {cod:'2953',item:'BUDWEISER LATA 269ML',unidade:'UN',valor:0},
+    {cod:'9',item:'CEBOLA',unidade:'KG',valor:1.5289},
+    {cod:'2858',item:'CEBOLINHA',unidade:'KG',valor:0},
+    {cod:'10',item:'CENOURA',unidade:'KG',valor:5.8655},
+    {cod:'173',item:'CHOPP CLARO BRAHMA',unidade:'LT',valor:29.5},
+    {cod:'80',item:'CONJUNTO GARFO E FACA DESCARTAVEIS',unidade:'UN',valor:0},
+    {cod:'2238',item:'CONTRA FILE 150G',unidade:'UN',valor:15},
+    {cod:'722',item:'COPO 220 ML BRANCO VICSTAFFO',unidade:'UN',valor:67},
+    {cod:'123',item:'COPO 330 ML CRISTAL VICSTAFFO',unidade:'UN',valor:33},
+    {cod:'124',item:'COPO 550 ML CRISTAL VICSTAFFO',unidade:'UN',valor:35},
+    {cod:'2520',item:'COPO 770 ML CRISTAL VICSTAFFO',unidade:'UN',valor:25},
+    {cod:'300',item:'DETERGENTE LIQUIDO',unidade:'LT',valor:0},
+    {cod:'2574',item:'DIVISORIA P/ EMBALAGEM DELIVERY',unidade:'UN',valor:40},
+    {cod:'2575',item:'EMBALAGEM FRITAS VICSTAFFO',unidade:'UN',valor:0},
+    {cod:'2773',item:'EMBALAGEM HAMBURGUER E FRITAS VICSTAFFO',unidade:'UN',valor:0},
+    {cod:'2774',item:'EMBALAGEM HAMBURGUER VICSTAFFO',unidade:'UN',valor:9},
+    {cod:'2576',item:'EMBALAGEM PARA REFEICAO VICSTAFFO',unidade:'UN',valor:10},
+    {cod:'2622',item:'ESCOVA DE ACO',unidade:'UN',valor:0},
+    {cod:'2722',item:'ESPETO DE BAMBU',unidade:'UN',valor:12},
+    {cod:'582',item:'ESPETO QUEIJO COALHO',unidade:'UN',valor:1},
+    {cod:'277',item:'ETIQUETA CONSUMO IMEDIATO',unidade:'UN',valor:0},
+    {cod:'2670',item:'ETIQUETA LACRE DELIVERY',unidade:'UN',valor:0},
+    {cod:'2716',item:'ETIQUETA VALIDADE VICSTAFFO',unidade:'UN',valor:0},
+    {cod:'2619',item:'FACA PERSONALIZADA VICSTAFFO',unidade:'UN',valor:0},
+    {cod:'2328',item:'FAROFA PRONTA',unidade:'KG',valor:1.66},
+    {cod:'40',item:'FEIJAO CARIOQUINHA T1',unidade:'KG',valor:13.0456},
+    {cod:'41',item:'FETTUCCINE',unidade:'KG',valor:0.3666},
+    {cod:'689',item:'FILE DE FRANGO 130 G',unidade:'UN',valor:74},
+    {cod:'2506',item:'FILE DE FRANGO 300G',unidade:'UN',valor:11},
+    {cod:'2530',item:'FILE DE TILAPIA',unidade:'UN',valor:10},
+    {cod:'2943',item:'FILE MIGNON',unidade:'KG',valor:0},
+    {cod:'2612',item:'FRALDINHA',unidade:'UN',valor:24},
+    {cod:'706',item:'FRANGO PASSARINHO',unidade:'KG',valor:2.55},
+    {cod:'2620',item:'GARFO PERSONALIZADO VICSTAFFO',unidade:'UN',valor:0},
+    {cod:'550',item:'CILINDRO DE GAS',unidade:'UN',valor:0},
+    {cod:'530',item:'GELO',unidade:'KG',valor:0},
+    {cod:'2673',item:'GUARANA 1,5 L',unidade:'UN',valor:5},
+    {cod:'151',item:'GUARANA LATA 350 ML',unidade:'UN',valor:19},
+    {cod:'150',item:'GUARANA ZERO LATA 350 ML',unidade:'UN',valor:19},
+    {cod:'2548',item:'GUARDANAPO SACHE VICSTAFFO',unidade:'UN',valor:309},
+    {cod:'2596',item:'HAMBURGUER CONG. 150GR',unidade:'UN',valor:12},
+    {cod:'625',item:'LARANJA',unidade:'KG',valor:37.4065},
+    {cod:'14',item:'LIMAO',unidade:'KG',valor:1.35},
+    {cod:'2333',item:'LINGUICA CALABRESA DEFUMADA',unidade:'UN',valor:26},
+    {cod:'514',item:'LUVA DE PROCEDIMENTO',unidade:'UN',valor:0},
+    {cod:'2330',item:'MARGARINA 75% LIP.',unidade:'KG',valor:1.3205},
+    {cod:'2423',item:'MOLHO BARBECUE',unidade:'KG',valor:0.06},
+    {cod:'249',item:'MOLHO ESTROGONOFE DE CARNE',unidade:'KG',valor:1.75},
+    {cod:'248',item:'MOLHO ESTROGONOFE DE FRANGO',unidade:'KG',valor:1},
+    {cod:'2547',item:'MOLHO HONEY MUSTARD',unidade:'KG',valor:0.58},
+    {cod:'2489',item:'MOLHO MAIONESE COM ERVAS',unidade:'KG',valor:0.99},
+    {cod:'2420',item:'MOLHO POMODORO',unidade:'KG',valor:4.17},
+    {cod:'2421',item:'MOLHO SALADINHA',unidade:'KG',valor:0.915},
+    {cod:'2828',item:'VICSTAFFO PRIME ANGUS',unidade:'UN',valor:10},
+    {cod:'2401',item:'OLEO DE ALGODAO',unidade:'LT',valor:7.416},
+    {cod:'55',item:'OLEO DE SOJA',unidade:'LT',valor:2.9038},
+    {cod:'2507',item:'ONION RING',unidade:'KG',valor:1.93},
+    {cod:'529',item:'OVOS',unidade:'UN',valor:22},
+    {cod:'701',item:'PAO DE ALHO',unidade:'KG',valor:0.12},
+    {cod:'2597',item:'PAO DE HAMBURGUER TIPO ITALIANO',unidade:'UN',valor:12},
+    {cod:'17',item:'PIMENTAO',unidade:'KG',valor:1.44},
+    {cod:'18',item:'PURE DE TOMATE',unidade:'KG',valor:2.46},
+    {cod:'45',item:'SAL',unidade:'KG',valor:0},
+    {cod:'46',item:'TEMPERO FRANGO',unidade:'KG',valor:0},
+    {cod:'2238',item:'FILE MIGNON 150G VICSTAFFO',unidade:'UN',valor:15},
+    {cod:'604',item:'OREGANO',unidade:'KG',valor:0.0028},
+    {cod:'2800',item:'ACUCAR REFINADO',unidade:'KG',valor:0},
+    {cod:'2801',item:'CAFE EM PO',unidade:'KG',valor:0},
+    {cod:'2802',item:'LEITE UHT INTEGRAL',unidade:'LT',valor:0},
+    {cod:'2803',item:'MANTEIGA',unidade:'KG',valor:0},
+    {cod:'2804',item:'QUEIJO MUSSARELA',unidade:'KG',valor:0},
+    {cod:'2805',item:'PRESUNTO FATIADO',unidade:'KG',valor:0},
+    {cod:'2806',item:'TOMATE',unidade:'KG',valor:0},
+    {cod:'2807',item:'ALFACE AMERICANA',unidade:'KG',valor:0},
+    {cod:'2808',item:'COENTRO',unidade:'KG',valor:0},
+    {cod:'2809',item:'VINAGRE',unidade:'LT',valor:0}
+  ];
+}
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById('login-screen').classList.add('open');
+  setTimeout(function(){ document.getElementById('login-user').focus(); }, 200);
+  if (!GH.isConfigured()) setStatus('⚠️ Configure o GitHub →', 'var(--danger)');
+  else setStatus('⏳ Aguardando login...', 'var(--amber)');
+});
+</script>
+</body>
+</html>
