@@ -1,0 +1,2 @@
+# Inventario
+Inventario da Loja
