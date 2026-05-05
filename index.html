@@ -1183,7 +1183,6 @@ function aplicarPermissoesNav() {
   Object.keys(modulos).forEach(function(mod) {
     var btn = document.getElementById(modulos[mod]);
     if (!btn) return;
-    if (mod === 'inventario' || mod === 'inventariog') { btn.style.display=''; return; }
     if (isSA || isAdmin) { btn.style.display=''; return; }
     if (!perms) { btn.style.display=''; return; }
     btn.style.display = perms[mod] ? '' : 'none';
