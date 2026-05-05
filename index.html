@@ -1187,6 +1187,9 @@ function aplicarPermissoesNav() {
     if (!perms) { btn.style.display=''; return; }
     btn.style.display = perms[mod] ? '' : 'none';
   });
+
+  /* Redireciona para o primeiro módulo permitido ao entrar */
+  _redirecionarPrimeiroModulo();
 }
 
 /* Superadmin: troca de empresa ativa */
@@ -1598,19 +1601,40 @@ function carregarDadosApp() {
 /* =========================================================
    NAVEGAÇÃO DE ABAS
    ========================================================= */
+function _temPermissao(name) {
+  if (!_usuarioLogado) return false;
+  var isSA    = _usuarioLogado.perfil === 'superadmin';
+  var isAdmin = _usuarioLogado.perfil === 'admin';
+  if (isSA) return true;
+  if (name === 'empresas') return false;
+  if (isAdmin) return true;
+  var perms = _usuarioLogado.permissoes;
+  if (!perms) return true; /* legado sem permissões definidas: libera tudo */
+  return !!perms[name];
+}
+
+function _redirecionarPrimeiroModulo() {
+  var ordem = ['inventario','inventariog','historico','historicog','produtos','produtosg','usuarios'];
+  for (var i = 0; i < ordem.length; i++) {
+    if (_temPermissao(ordem[i])) {
+      var btn = document.getElementById('nav-' + ordem[i]);
+      goTab(ordem[i], btn);
+      return;
+    }
+  }
+}
+
 function goTab(name, el) {
   /* Verificar permissão */
-  if (_usuarioLogado && name !== 'inventario') {
-    var isSA = _usuarioLogado.perfil==='superadmin';
-    var isAdmin = _usuarioLogado.perfil==='admin';
-    if (!isSA && !isAdmin) {
-      var perms = _usuarioLogado.permissoes;
-      if (perms && !perms[name]) {
-        toast('⛔ Você não tem permissão para acessar este módulo.','error');
-        return;
-      }
+  if (_usuarioLogado) {
+    if (name === 'empresas' && _usuarioLogado.perfil !== 'superadmin') {
+      toast('⛔ Acesso restrito ao Super Administrador.','error');
+      return;
     }
-    if (name==='empresas' && !isSA) { toast('⛔ Acesso restrito ao Super Administrador.','error'); return; }
+    if (!_temPermissao(name)) {
+      toast('⛔ Você não tem permissão para acessar este módulo.','error');
+      return;
+    }
   }
   document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
   document.querySelectorAll('.nav-tab').forEach(function(t){ t.classList.remove('active'); });
